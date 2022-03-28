@@ -4,6 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Logo">
+    tools:context=".LogoActivity">
 
+    <ImageView
+        android:id="@+id/app_logo1"
+        android:layout_width="125sp"
+        android:layout_height="125sp"
+        android:layout_centerInParent="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_launcher_round" />
 </androidx.constraintlayout.widget.ConstraintLayout>

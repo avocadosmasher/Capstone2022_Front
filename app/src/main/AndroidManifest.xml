@@ -14,9 +14,9 @@
         android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.Capstone2">
-        <activity android:name=".Login"></activity>
-        <activity android:name=".Logo" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".LogoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
