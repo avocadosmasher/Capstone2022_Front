@@ -78,6 +78,4 @@ class RetrofitClient {
 
         initMyApi = retrofit.create(initMyApi.javaClass)
     }
-
-
 }

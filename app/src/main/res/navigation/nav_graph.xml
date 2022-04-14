@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/allFeedFragment">
+
+
+    <fragment
+        android:id="@+id/allFeedFragment"
+        android:name="org.techtown.capstone2.fragments.AllFeedFragment"
+        android:label="fragment_all_feed"
+        tools:layout="@layout/fragment_all_feed" >
+        <action
+            android:id="@+id/action_allFeedFragment_to_writingFragment"
+            app:destination="@id/writingFragment" />
+        <action
+            android:id="@+id/action_allFeedFragment_to_followingFeedFragment"
+            app:destination="@id/followingFeedFragment" />
+        <action
+            android:id="@+id/action_allFeedFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_allFeedFragment_to_detailedPostFragment"
+            app:destination="@id/detailedPostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailedPostFragment"
+        android:name="org.techtown.capstone2.fragments.DetailedPostFragment"
+        android:label="fragment_detailed_post"
+        tools:layout="@layout/fragment_detailed_post" >
+        <action
+            android:id="@+id/action_detailedPostFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/followingFeedFragment"
+        android:name="org.techtown.capstone2.fragments.FollowingFeedFragment"
+        android:label="fragment_following_feed"
+        tools:layout="@layout/fragment_following_feed" >
+        <action
+            android:id="@+id/action_followingFeedFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_followingFeedFragment_to_allFeedFragment"
+            app:destination="@id/allFeedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="org.techtown.capstone2.fragments.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/writingFragment"
+        android:name="org.techtown.capstone2.fragments.WritingFragment"
+        android:label="fragment_writing"
+        tools:layout="@layout/fragment_writing" />
+    <fragment
+        android:id="@+id/profileFragment2"
+        android:name="org.techtown.capstone2.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+</navigation>
