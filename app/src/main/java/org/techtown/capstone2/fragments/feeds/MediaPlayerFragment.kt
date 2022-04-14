@@ -1,4 +1,4 @@
-package org.techtown.capstone2.fragments
+package org.techtown.capstone2.fragments.feeds
 
 import android.media.MediaPlayer
 import android.os.Bundle

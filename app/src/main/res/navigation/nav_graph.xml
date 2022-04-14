@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/allFeedFragment"
-        android:name="org.techtown.capstone2.fragments.AllFeedFragment"
+        android:name="org.techtown.capstone2.fragments.feeds.AllFeedFragment"
         android:label="fragment_all_feed"
         tools:layout="@layout/fragment_all_feed" >
         <action
