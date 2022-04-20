@@ -17,13 +17,18 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.transition.MaterialElevationScale
 import kotlinx.android.synthetic.main.activity_main.*
-import org.techtown.capstone2.fragments.AllFeedFragmentDirections
+import org.techtown.capstone2.databinding.ActivityMainBinding
+import org.techtown.capstone2.fragments.feeds.AllFeedFragmentDirections
+import org.techtown.capstone2.viewmodel.MainViewModel
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener{
 
+    private lateinit var viewModel: MainViewModel
+    private lateinit var binding:ActivityMainBinding
     lateinit var navController: NavController
 
     val currentNavigationFragment: Fragment?
@@ -34,7 +39,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         navController = nav_host_fragment_container.findNavController()
         setUpFab()

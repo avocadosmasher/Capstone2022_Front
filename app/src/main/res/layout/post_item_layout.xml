@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+-->
+
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,7 +19,7 @@
     <data>
         <variable
             name="post"
-            type="org.techtown.capstone2.data.Post" />
+            type="org.techtown.apollo.GetAllPostsQuery.Post" />
     </data>
 
     <FrameLayout
@@ -41,7 +52,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:maxLines="1"
-                    android:text="@{post.user.fullName}"
+                    android:text="@{post.member.name}"
                     android:textAppearance="?attr/textAppearanceBody2"
                     app:layout_constraintEnd_toStartOf="@+id/poster_profile_image_view"
                     app:layout_constraintStart_toStartOf="parent"
@@ -64,6 +75,7 @@
                     app:layout_goneMarginEnd="16dp"
                     tools:text="My new song just released!" />
 
+
                 <TextView
                     android:id="@+id/body_preview_text_view"
                     android:layout_width="match_parent"
@@ -72,14 +84,15 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:maxLines="2"
-                    android:text="@{post.body}"
+                    android:text="@{post.content}"
                     android:textAppearance="?attr/textAppearanceBody1"
-                    app:goneIf="@{!post.hasBody}"
+                    app:goneIf="@{post.content.empty}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.486"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_text_view"
-                    tools:text="I've been working on it for 2 weeks friends! Enjoy it~" />
+                    tools:text="I've been working on it for 2 weeks friends! Enjoy it~"
+                    />
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -100,7 +113,7 @@
                     android:layout_marginEnd="16dp"
                     android:contentDescription="Profile image of poster"
                     app:glideCircularCrop="@{true}"
-                    app:glideSrc="@{post.user.avatar}"
+                    app:glideSrc="@{post.member.picture}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

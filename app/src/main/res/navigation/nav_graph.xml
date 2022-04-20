@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/followingFeedFragment"
-        android:name="org.techtown.capstone2.fragments.FollowingFeedFragment"
+        android:name="org.techtown.capstone2.fragments.feeds.FollowingFeedFragment"
         android:label="fragment_following_feed"
         tools:layout="@layout/fragment_following_feed" >
         <action

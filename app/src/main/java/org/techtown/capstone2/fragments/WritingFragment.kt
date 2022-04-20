@@ -43,7 +43,7 @@ class WritingFragment : Fragment() {
             startContainerColor = requireContext().themeColor(R.attr.colorSecondary)
             endContainerColor = requireContext().themeColor(R.attr.colorSurface)
         }
-        returnTransition = Slide(Gravity.LEFT).apply {
+        returnTransition = Slide().apply {
             duration = resources.getInteger(R.integer.material_motion_duration_medium_2).toLong()
             addTarget(R.id.WritingView)
         }

@@ -1,0 +1,14 @@
+query getAllPosts($off: Int! = 0, $size: Int! = 10)
+{
+    posts(offset: $off,size: $size)
+    {
+        id
+        title
+        content
+        member{
+            name
+            picture
+        }
+        createdAt
+    }
+}

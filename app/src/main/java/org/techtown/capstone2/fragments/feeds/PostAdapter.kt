@@ -1,38 +1,36 @@
 package org.techtown.capstone2.fragments.feeds
 
-import android.text.Layout
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.techtown.capstone2.R
-import org.techtown.capstone2.data.Post
+import org.techtown.apollo.GetAllPostsQuery
+import org.techtown.capstone2.databinding.PostItemLayoutBinding
 
 class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
-    var items = ArrayList<Post>()
+    var items : List<GetAllPostsQuery.Post?>? = null
     lateinit var listener:OnPostItemClickListener
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = items?.size ?:0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.post_item_layout,parent,false)
-        return ViewHolder(itemView)
+        val binding = PostItemLayoutBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.setItem(item)
+        val item = items?.get(position)
+        if(item != null) holder.bind(item)
     }
 
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(private val binding: PostItemLayoutBinding): RecyclerView.ViewHolder(binding.root){
         init {
             itemView.setOnClickListener {
                 listener?.onItemClick(this,itemView,adapterPosition)
             }
         }
-        fun setItem(item:Post){
-            // Need to code here
+        fun bind(item:GetAllPostsQuery.Post){
+            binding.post = item
         }
     }
 }
