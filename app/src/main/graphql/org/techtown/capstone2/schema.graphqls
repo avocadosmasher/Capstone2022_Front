@@ -1,0 +1,150 @@
+type Board {
+  id: ID!
+
+  name: String!
+
+  posts: [Post]
+}
+
+type Comment {
+  id: ID!
+
+  post: Post!
+
+  member: Member!
+
+  content: String!
+}
+
+"""
+Java 8 LocalDateTime Scalar
+"""
+scalar LocalDateTime
+
+type Member {
+  id: ID!
+
+  email: String!
+
+  name: String!
+
+  picture: String
+
+  posts: [Post]
+
+  comments: [Comment]
+}
+
+input MemberInput {
+  email: String!
+
+  picture: String
+
+  name: String!
+}
+
+type Mutation {
+  addPost(postDto: postInput): Post!
+
+  updatePost(id: ID!, postDto: postInput): Post!
+
+  deletePost(id: ID!): Post!
+
+  addBoard(boardDto: boardInput): Board
+
+  addComment(commentDto: commentInput!): Comment
+
+  updateComment(id: ID!, commentDto: commentInput!): Comment
+
+  deleteComment(id: ID!): Comment
+
+  addMember(memberDto: MemberInput): Member
+
+  addSubscribe(fromMemberId: ID!, toMemberId: ID!): Subscribe
+
+  deleteSubscribe(fromMemberId: ID!, toMemberId: ID!): Subscribe
+}
+
+type Post {
+  id: ID!
+
+  title: String!
+
+  content: String!
+
+  member: Member!
+
+  board: Board!
+
+  comments: [Comment]
+
+  createdAt: LocalDateTime!
+}
+
+type Query {
+  posts(offset: Int!, size: Int!): [Post]
+
+  getSubscriberPosts(memberId: ID!): [Post]
+
+  getPost(id: ID!): Post
+
+  boards: [Board]
+
+  getBoard(id: ID!): Board
+
+  comments: [Comment]
+
+  getMember(id: ID!): Member
+
+  members: [Member]
+
+  getSubscriberList(id: ID!): [Member]
+
+  getSubscribeCount(fromMemberId: ID!): Int!
+
+  greeting: String
+
+  greetingMono: String
+
+  greetingsFlux: [String]
+}
+
+type Subscribe {
+  id: ID!
+
+  fromMember: Member
+
+  toMember: Member
+}
+
+type Subscription {
+  greetings: String
+}
+
+input boardInput {
+  name: String!
+}
+
+input commentInput {
+  postId: Int!
+
+  memberId: Int!
+
+  content: String!
+}
+
+input postInput {
+  title: String!
+
+  content: String!
+
+  memberId: Int!
+
+  boardId: Int!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
