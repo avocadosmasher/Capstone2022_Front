@@ -11,7 +11,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.ToggleButton
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -44,6 +46,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         navController = nav_host_fragment_container.findNavController()
         setUpFab()
+
+        viewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
     }
 
     private fun setUpFab(){

@@ -8,8 +8,8 @@ import org.techtown.capstone2.databinding.PostItemLayoutBinding
 
 class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
-    var items : List<GetAllPostsQuery.Post?>? = null
-    lateinit var listener:OnPostItemClickListener
+    val items = ArrayList<GetAllPostsQuery.Post?>()
+    lateinit var listener:PostAdapterListener
 
     override fun getItemCount() = items?.size ?:0
 
@@ -19,6 +19,10 @@ class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if(position == (itemCount - 1)){
+            //callBack method must be implemented here
+            listener?.onReachedLastItem(items)
+        }
         val item = items?.get(position)
         if(item != null) holder.bind(item)
     }
