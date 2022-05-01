@@ -20,7 +20,6 @@ class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(position == (itemCount - 1)){
-            //callBack method must be implemented here
             listener?.onReachedLastItem(items)
         }
         val item = items?.get(position)

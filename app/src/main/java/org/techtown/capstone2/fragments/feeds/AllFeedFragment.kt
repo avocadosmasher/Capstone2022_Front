@@ -21,14 +21,8 @@ class AllFeedFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentAllFeedBinding.inflate(inflater,container,false)
-
-        val layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
-        binding.recyclerView.layoutManager = layoutManager
-
+        // If there is no change after the initialization, that must be coded here!
         postAdapter.listener = object : PostAdapterListener{
             override fun onItemClick(holder: PostAdapter.ViewHolder?, view: View?, position: Int) {
                 TODO("Not yet implemented")
@@ -39,12 +33,19 @@ class AllFeedFragment : Fragment() {
             }
         }
 
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentAllFeedBinding.inflate(inflater,container,false)
+
+        val layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
+        binding.recyclerView.layoutManager = layoutManager
+
         binding.recyclerView.adapter = postAdapter
 
         getDataSetFromServer(0,10)
 
         return binding.root
-        //return inflater.inflate(R.layout.fragment_all_feed, container, false)
     }
 
     private fun addArrayListItem(posts: List<GetAllPostsQuery.Post?>?){
@@ -59,5 +60,8 @@ class AllFeedFragment : Fragment() {
             addArrayListItem(response.data?.posts)
             postAdapter.notifyDataSetChanged()
         }
+    }
+
+    private fun setNewArrayList(){
     }
 }

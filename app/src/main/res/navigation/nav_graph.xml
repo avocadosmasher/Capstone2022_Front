@@ -15,9 +15,6 @@
             android:id="@+id/action_allFeedFragment_to_writingFragment"
             app:destination="@id/writingFragment" />
         <action
-            android:id="@+id/action_allFeedFragment_to_followingFeedFragment"
-            app:destination="@id/followingFeedFragment" />
-        <action
             android:id="@+id/action_allFeedFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
         <action
@@ -32,18 +29,6 @@
         <action
             android:id="@+id/action_detailedPostFragment_to_profileFragment2"
             app:destination="@id/profileFragment2" />
-    </fragment>
-    <fragment
-        android:id="@+id/followingFeedFragment"
-        android:name="org.techtown.capstone2.fragments.feeds.FollowingFeedFragment"
-        android:label="fragment_following_feed"
-        tools:layout="@layout/fragment_following_feed" >
-        <action
-            android:id="@+id/action_followingFeedFragment_to_settingFragment"
-            app:destination="@id/settingFragment" />
-        <action
-            android:id="@+id/action_followingFeedFragment_to_allFeedFragment"
-            app:destination="@id/allFeedFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
