@@ -56,8 +56,6 @@ dependencies {
 
     // Floating ActionButton을 위한
     implementation 'com.google.android.material:material:<version>'
-    // Floating Action Button의 Transform을 위한 imple
-
 
     //로그를 남기기 위한 라이브러리
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
@@ -66,6 +64,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.google.code.gson:gson:2.8.5'
+    // icon switch
     implementation('com.polyak:icon-switch:1.0.0')
 
     // 여기부터 ApolloClient와 graphql 을 사용하기 위함.

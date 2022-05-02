@@ -1,31 +1,20 @@
 package org.techtown.capstone2
 
-import android.app.ActivityOptions
-import android.content.Intent
-import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.ToggleButton
-import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.transition.MaterialElevationScale
+import com.polyak.iconswitch.IconSwitch.Checked
 import kotlinx.android.synthetic.main.activity_main.*
 import org.techtown.capstone2.databinding.ActivityMainBinding
 import org.techtown.capstone2.fragments.feeds.AllFeedFragmentDirections
 import org.techtown.capstone2.viewmodel.MainViewModel
-import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener{
 
@@ -48,6 +37,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         setUpFab()
 
         viewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+
+        icon_switch.setCheckedChangeListener {
+            viewModel.iconSwitchListener?.onIconSwitchChanged(it)
+        }
     }
 
     private fun setUpFab(){
@@ -94,9 +87,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
 
         val directions = when(dir){
-            NavDir.FOLLOWING_FEED ->{
-                AllFeedFragmentDirections.actionAllFeedFragmentToFollowingFeedFragment()
-            }
             NavDir.DETAILED_POST->{
                 AllFeedFragmentDirections.actionAllFeedFragmentToDetailedPostFragment()
             }
