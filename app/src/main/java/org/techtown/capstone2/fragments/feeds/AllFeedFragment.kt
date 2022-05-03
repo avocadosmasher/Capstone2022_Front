@@ -8,16 +8,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.polyak.iconswitch.IconSwitch
+import com.apollographql.apollo3.api.Optional
 import com.polyak.iconswitch.IconSwitch.Checked
 import org.techtown.apollo.GetAllPostsQuery
 import org.techtown.capstone2.databinding.FragmentAllFeedBinding
 import org.techtown.capstone2.viewmodel.MainViewModel
+import kotlin.collections.ArrayList
 
 class AllFeedFragment : Fragment() {
 
     private lateinit var binding : FragmentAllFeedBinding
-    private var offset: Int = 0
+    private lateinit var offset: Array<Int>
+    private var offsetIndex = 0
+    private val importSize = 10
 
     private val viewModel: MainViewModel by activityViewModels()
     private var postAdapter = PostAdapter()
@@ -25,22 +28,30 @@ class AllFeedFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        offset = 0
-
+        offsetIndex = 0
+        offset = arrayOf(0,0)
         // If there is no change after the initialization, that must be coded here!
         postAdapter.listener = object : PostAdapterListener{
             override fun onItemClick(holder: PostAdapter.ViewHolder?, view: View?, position: Int) {
                 TODO("Not yet implemented")
             }
             override fun onReachedLastItem(items: ArrayList<GetAllPostsQuery.Post?>) {
-                getDataSetFromServer(offset,10,true)
+                getDataSetFromServer(offset[offsetIndex],importSize,true)
+                offset[offsetIndex] += 1
             }
         }
         viewModel.iconSwitchListener = object : IconSwitchListener{
             override fun onIconSwitchChanged(state: Checked) {
                 when(state){
-                    Checked.LEFT -> {}
-                    Checked.RIGHT ->{}
+                    Checked.LEFT -> {
+                        getDataSetFromServer(offset[offsetIndex],importSize,false)
+                        offsetIndex = 0
+                    }
+                    Checked.RIGHT ->{
+                        TODO("현재 계정의 ID를 기준으로 POST들을 불러와야함.")
+                        //getDataSetFromServer(offset[offsetIndex],importSize,false)
+                        //offsetIndex = 1
+                    }
                 }
             }
         }
@@ -55,7 +66,7 @@ class AllFeedFragment : Fragment() {
 
         binding.recyclerView.adapter = postAdapter
 
-        getDataSetFromServer(0,10,true)
+        getDataSetFromServer(offset[offsetIndex],importSize,true)
 
         return binding.root
     }
@@ -69,7 +80,7 @@ class AllFeedFragment : Fragment() {
 
     fun getDataSetFromServer(off : Int, size : Int, addTsetF: Boolean){
         lifecycleScope.launchWhenResumed {
-            val response = viewModel.apolloClient.query(GetAllPostsQuery(off, size)).execute()
+            val response = viewModel.apolloClient.query(GetAllPostsQuery(toOptionalInt(off), toOptionalInt(size))).execute()
             when(addTsetF){
                 true -> addArrayListItem(response.data?.posts)
                 false -> setNewArrayList(response.data?.posts)
@@ -85,4 +96,6 @@ class AllFeedFragment : Fragment() {
             postAdapter.items.addAll(posts)
         }
     }
+
+    private fun toOptionalInt(num : Int) = Optional.Present(num)
 }
