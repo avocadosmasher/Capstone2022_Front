@@ -3,7 +3,7 @@ type Board {
 
   name: String!
 
-  posts: [Post]
+  posts(offset: Int!, size: Int!): [Post!]
 }
 
 type Comment {
@@ -32,7 +32,7 @@ type Member {
 
   posts: [Post]
 
-  comments: [Comment]
+  comments: [Comment!]
 }
 
 input MemberInput {
@@ -76,15 +76,13 @@ type Post {
 
   board: Board!
 
-  comments: [Comment]
+  comments(offset: Int!, size: Int!): [Comment!]
 
   createdAt: LocalDateTime!
 }
 
 type Query {
-  posts(offset: Int!, size: Int!): [Post]
-
-  getSubscriberPosts(memberId: ID!): [Post]
+  getSubscriberPosts(memberId: ID!, offset: Int!, size: Int!): [Post]
 
   getPost(id: ID!): Post
 
@@ -96,17 +94,11 @@ type Query {
 
   getMember(id: ID!): Member
 
-  members: [Member]
+  members: [Member!]
 
-  getSubscriberList(id: ID!): [Member]
+  getSubscriberList(id: ID!): [Member!]
 
   getSubscribeCount(fromMemberId: ID!): Int!
-
-  greeting: String
-
-  greetingMono: String
-
-  greetingsFlux: [String]
 }
 
 type Subscribe {
@@ -115,10 +107,6 @@ type Subscribe {
   fromMember: Member
 
   toMember: Member
-}
-
-type Subscription {
-  greetings: String
 }
 
 input boardInput {
@@ -146,5 +134,4 @@ input postInput {
 schema {
   query: Query
   mutation: Mutation
-  subscription: Subscription
 }

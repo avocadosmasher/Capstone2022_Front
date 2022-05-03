@@ -48,9 +48,9 @@ class AllFeedFragment : Fragment() {
                         offsetIndex = 0
                     }
                     Checked.RIGHT ->{
-                        TODO("현재 계정의 ID를 기준으로 POST들을 불러와야함.")
-                        //getDataSetFromServer(offset[offsetIndex],importSize,false)
-                        //offsetIndex = 1
+                        TODO("현재 계정의 ID를 기준으로 POST들의 내용을 불러와야함.")
+                        getDataSetFromServer(offset[offsetIndex],importSize,false)
+                        offsetIndex = 1
                     }
                 }
             }
@@ -82,8 +82,8 @@ class AllFeedFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             val response = viewModel.apolloClient.query(GetAllPostsQuery(toOptionalInt(off), toOptionalInt(size))).execute()
             when(addTsetF){
-                true -> addArrayListItem(response.data?.posts)
-                false -> setNewArrayList(response.data?.posts)
+                true -> addArrayListItem(response.data?.getBoard?.posts)
+                false -> setNewArrayList(response.data?.getBoard?.posts)
             }
             postAdapter.notifyDataSetChanged()
         }
