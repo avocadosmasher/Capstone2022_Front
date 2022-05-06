@@ -14,3 +14,18 @@ query getAllPosts($off: Int! = 0, $size: Int! = 10)
         }
     }
 }
+
+query getSubscriberPosts($id:ID! = 1, $offset: Int! = 0, $size: Int! = 10) {
+    getSubscriberPosts(memberId: $id,offset: $offset,size: $size)
+    {
+        id
+        title
+        content
+        member{
+            name
+            picture
+        }
+        createdAt
+    }
+}
+

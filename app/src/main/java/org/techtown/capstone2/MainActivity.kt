@@ -39,7 +39,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         viewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
 
         icon_switch.setCheckedChangeListener {
-            viewModel.iconSwitchListener?.onIconSwitchChanged(it)
+            var tf = if(it == Checked.LEFT) true else false
+            viewModel.iconSwitchListener?.onIconSwitchChanged(tf)
         }
     }
 

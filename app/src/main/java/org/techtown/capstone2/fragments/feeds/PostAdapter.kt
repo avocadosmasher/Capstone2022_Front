@@ -4,14 +4,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import org.techtown.apollo.GetAllPostsQuery
+import org.techtown.apollo.GetSubscriberPostsQuery
 import org.techtown.capstone2.databinding.PostItemLayoutBinding
+import org.techtown.capstone2.viewmodel.MainViewModel
 
 class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
-    val items = ArrayList<GetAllPostsQuery.Post?>()
+    lateinit var mainViewModel : MainViewModel
+    val allList = ArrayList<GetAllPostsQuery.Post?>()
+    val subList = ArrayList<GetSubscriberPostsQuery.GetSubscriberPost?>()
     lateinit var listener:PostAdapterListener
 
-    override fun getItemCount() = items?.size ?:0
+    fun getList() = if(mainViewModel.checkedLeft == true) allList else subList
+
+    override fun getItemCount() = getList()?.size ?:0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = PostItemLayoutBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -20,9 +26,9 @@ class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(position == (itemCount - 1)){
-            listener?.onReachedLastItem(items)
+            listener?.onReachedLastItem()
         }
-        val item = items?.get(position)
+        val item = getList()?.get(position)
         if(item != null) holder.bind(item)
     }
 
@@ -32,8 +38,15 @@ class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
                 listener?.onItemClick(this,itemView,adapterPosition)
             }
         }
-        fun bind(item:GetAllPostsQuery.Post){
-            binding.post = item
+        fun bind(item:Any){
+            binding.apply {
+                viewModel = mainViewModel
+                if(item is GetAllPostsQuery.Post){
+                    allPost = item
+                }else if(item is GetSubscriberPostsQuery.GetSubscriberPost){
+                    subPost = item
+                }
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.techtown.capstone2.fragments.feeds
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +10,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo3.api.Optional
-import com.polyak.iconswitch.IconSwitch.Checked
 import org.techtown.apollo.GetAllPostsQuery
+import org.techtown.apollo.GetSubscriberPostsQuery
 import org.techtown.capstone2.databinding.FragmentAllFeedBinding
 import org.techtown.capstone2.viewmodel.MainViewModel
-import kotlin.collections.ArrayList
 
 class AllFeedFragment : Fragment() {
 
@@ -28,6 +28,8 @@ class AllFeedFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        postAdapter.mainViewModel = viewModel
+
         offsetIndex = 0
         offset = arrayOf(0,0)
         // If there is no change after the initialization, that must be coded here!
@@ -35,22 +37,27 @@ class AllFeedFragment : Fragment() {
             override fun onItemClick(holder: PostAdapter.ViewHolder?, view: View?, position: Int) {
                 TODO("Not yet implemented")
             }
-            override fun onReachedLastItem(items: ArrayList<GetAllPostsQuery.Post?>) {
-                getDataSetFromServer(offset[offsetIndex],importSize,true)
+            override fun onReachedLastItem() {
+                when(viewModel.checkedLeft){
+                    true -> getAllPosts(offset[offsetIndex],importSize,true)
+                    false -> getSubPosts(offset[offsetIndex],importSize,true)
+                }
                 offset[offsetIndex] += 1
             }
         }
         viewModel.iconSwitchListener = object : IconSwitchListener{
-            override fun onIconSwitchChanged(state: Checked) {
+            override fun onIconSwitchChanged(state: Boolean) {
+                offset[offsetIndex] = 0
+
+                viewModel.checkedLeft = state
                 when(state){
-                    Checked.LEFT -> {
-                        getDataSetFromServer(offset[offsetIndex],importSize,false)
+                    true -> {
                         offsetIndex = 0
+                        getAllPosts(offset[offsetIndex],importSize,false)
                     }
-                    Checked.RIGHT ->{
-                        TODO("현재 계정의 ID를 기준으로 POST들의 내용을 불러와야함.")
-                        getDataSetFromServer(offset[offsetIndex],importSize,false)
+                    false ->{
                         offsetIndex = 1
+                        getSubPosts(offset[offsetIndex],importSize,false)
                     }
                 }
             }
@@ -66,36 +73,59 @@ class AllFeedFragment : Fragment() {
 
         binding.recyclerView.adapter = postAdapter
 
-        getDataSetFromServer(offset[offsetIndex],importSize,true)
+        getAllPosts(offset[offsetIndex],importSize,true)
 
         return binding.root
     }
 
-    private fun addArrayListItem(posts: List<GetAllPostsQuery.Post?>?){
+    /** 전체 피드 관련 Method **/
+    private fun addAllPosts(posts: List<GetAllPostsQuery.Post?>?){
         // Can be used to initialize or just add more data to the list.
         if(posts != null){
-            postAdapter.items.addAll(posts)
+            postAdapter.allList.addAll(posts)
         }
     }
-
-    fun getDataSetFromServer(off : Int, size : Int, addTsetF: Boolean){
+    private fun getAllPosts(off : Int, size : Int, addTsetF: Boolean){
         lifecycleScope.launchWhenResumed {
             val response = viewModel.apolloClient.query(GetAllPostsQuery(toOptionalInt(off), toOptionalInt(size))).execute()
             when(addTsetF){
-                true -> addArrayListItem(response.data?.getBoard?.posts)
-                false -> setNewArrayList(response.data?.getBoard?.posts)
+                true -> addAllPosts(response.data?.getBoard?.posts)
+                false -> setAllPosts(response.data?.getBoard?.posts)
             }
             postAdapter.notifyDataSetChanged()
         }
     }
-
-    private fun setNewArrayList(posts: List<GetAllPostsQuery.Post?>?){
+    private fun setAllPosts(posts: List<GetAllPostsQuery.Post?>?){
         // Can be used to refresh the arraylist
         if(posts != null){
-            postAdapter.items.clear()
-            postAdapter.items.addAll(posts)
+            postAdapter.allList.clear()
+            postAdapter.allList.addAll(posts)
+        }
+    }
+
+    /** 구독 피드 관련 Method **/
+    private fun addSubPosts(posts:List<GetSubscriberPostsQuery.GetSubscriberPost?>?){
+        if(posts != null){
+            postAdapter.subList.addAll(posts)
+        }
+    }
+    private fun getSubPosts(off : Int, size : Int, addTsetF: Boolean){
+        lifecycleScope.launchWhenResumed {
+            val response = viewModel.apolloClient.query(GetSubscriberPostsQuery(toOptionalString("1"),toOptionalInt(off), toOptionalInt(size))).execute()
+            when(addTsetF){
+                true -> addSubPosts(response.data?.getSubscriberPosts)
+                false -> setSubPosts(response.data?.getSubscriberPosts)
+            }
+            postAdapter.notifyDataSetChanged()
+        }
+    }
+    private fun setSubPosts(posts:List<GetSubscriberPostsQuery.GetSubscriberPost?>?){
+        if(posts != null){
+            postAdapter.subList.clear()
+            postAdapter.subList.addAll(posts)
         }
     }
 
     private fun toOptionalInt(num : Int) = Optional.Present(num)
+    private fun toOptionalString(st : String) = Optional.Present(st)
 }
