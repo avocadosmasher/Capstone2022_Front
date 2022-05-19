@@ -29,3 +29,27 @@ query getSubscriberPosts($id:ID! = 1, $offset: Int! = 0, $size: Int! = 10) {
     }
 }
 
+query getPost($id:ID!){
+    getPost(id: $id){
+        id
+        title
+        content
+        member{
+            id
+        }
+        comments{
+            member{
+                name
+                picture
+            }
+            content
+        }
+    }
+}
+
+mutation addPost($postDto:postInput){
+    addPost(postDto: $postDto){
+        createdAt
+    }
+}
+

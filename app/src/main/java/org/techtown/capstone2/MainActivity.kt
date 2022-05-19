@@ -28,9 +28,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             ?.fragments
             ?.first()
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
         navController = nav_host_fragment_container.findNavController()

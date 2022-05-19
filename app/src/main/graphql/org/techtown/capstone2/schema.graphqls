@@ -72,11 +72,13 @@ type Post {
 
   content: String!
 
+  audio: String
+
   member: Member!
 
   board: Board!
 
-  comments(offset: Int!, size: Int!): [Comment!]
+  comments: [Comment!]
 
   createdAt: LocalDateTime!
 }

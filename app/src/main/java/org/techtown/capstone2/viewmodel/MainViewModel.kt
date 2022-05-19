@@ -6,11 +6,13 @@ import com.apollographql.apollo3.network.okHttpClient
 import com.polyak.iconswitch.IconSwitch
 import okhttp3.OkHttpClient
 import org.techtown.capstone2.fragments.feeds.IconSwitchListener
+import kotlin.properties.Delegates
 
 class MainViewModel : ViewModel() {
     val serverUrl = "http://133.186.247.141:5000/graphql"
     val okHttpClient : OkHttpClient
     val apolloClient: ApolloClient
+    private var userID by Delegates.notNull<Int>()
     lateinit var iconSwitchListener:IconSwitchListener
     var checkedLeft: Boolean = true
 
@@ -21,4 +23,10 @@ class MainViewModel : ViewModel() {
             .okHttpClient(okHttpClient)
             .build()
     }
+
+
+    fun setUserId(id:Int){
+        userID = id
+    }
+    fun getUserId() = userID
 }

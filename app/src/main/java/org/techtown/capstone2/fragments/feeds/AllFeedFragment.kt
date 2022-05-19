@@ -21,7 +21,6 @@ class AllFeedFragment : Fragment() {
     private lateinit var offset: Array<Int>
     private var offsetIndex = 0
     private val importSize = 10
-
     private val viewModel: MainViewModel by activityViewModels()
     private var postAdapter = PostAdapter()
 
@@ -88,6 +87,10 @@ class AllFeedFragment : Fragment() {
     private fun getAllPosts(off : Int, size : Int, addTsetF: Boolean){
         lifecycleScope.launchWhenResumed {
             val response = viewModel.apolloClient.query(GetAllPostsQuery(toOptionalInt(off), toOptionalInt(size))).execute()
+
+            for(a in response.data?.getBoard?.posts!!){
+                Log.d("getAllPosts","offset : " + offset[offsetIndex]+ ", id : " + a?.id?:"null")
+            }
             when(addTsetF){
                 true -> addAllPosts(response.data?.getBoard?.posts)
                 false -> setAllPosts(response.data?.getBoard?.posts)
@@ -112,6 +115,11 @@ class AllFeedFragment : Fragment() {
     private fun getSubPosts(off : Int, size : Int, addTsetF: Boolean){
         lifecycleScope.launchWhenResumed {
             val response = viewModel.apolloClient.query(GetSubscriberPostsQuery(toOptionalString("1"),toOptionalInt(off), toOptionalInt(size))).execute()
+
+            for(a in response.data?.getSubscriberPosts!!){
+                Log.d("getAllPosts",a?.id?:"null")
+            }
+
             when(addTsetF){
                 true -> addSubPosts(response.data?.getSubscriberPosts)
                 false -> setSubPosts(response.data?.getSubscriberPosts)
@@ -125,7 +133,6 @@ class AllFeedFragment : Fragment() {
             postAdapter.subList.addAll(posts)
         }
     }
-
     private fun toOptionalInt(num : Int) = Optional.Present(num)
     private fun toOptionalString(st : String) = Optional.Present(st)
 }
