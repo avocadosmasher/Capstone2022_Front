@@ -93,10 +93,6 @@ class WritingFragment : Fragment() {
             duration = resources.getInteger(R.integer.material_motion_duration_medium_2).toLong()
             addTarget(R.id.WritingView)
         }
-
-
-        TODO("CONFIRM BUTTON LISTENER")
-        TODO("NEED A FUNCTION THAT HANDLES GRAPHQL REQUEST")
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
