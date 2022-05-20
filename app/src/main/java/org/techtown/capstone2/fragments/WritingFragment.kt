@@ -36,10 +36,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.net.URI
+import kotlin.contracts.contract
+import kotlin.properties.Delegates
 
 class WritingFragment : Fragment() {
 
-    private lateinit var filePath: String
+    private val viewModel: MainViewModel by activityViewModels()
+    private lateinit var filePath:String
     private lateinit var fileName:String
     private lateinit var binding:FragmentWritingBinding
     private val postInput by lazy {
@@ -52,7 +55,7 @@ class WritingFragment : Fragment() {
             )
         )
     }
-    private val viewModel: MainViewModel by activityViewModels()
+    private var isFileSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +74,15 @@ class WritingFragment : Fragment() {
 
         /** 글 작성 **/
         binding.writingConfirm.setOnClickListener {
-            launchUpload()
+            lifecycleScope.launch {
+                /** Title and content **/
+                viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+            }
+            launchFileUpload()
+        }
+
+        if (viewModel.getWTMode() == viewModel.MODE_UPDATE){
+            TODO("Post에 대한 정보를 DataBinding을 해줘야함.")
         }
 
         return binding.root
@@ -101,29 +112,30 @@ class WritingFragment : Fragment() {
             fileName = getFileNameFromUri(context,fullAudioUri)
             filePath = getRealPathFromUri(context,fullAudioUri)
             binding.musicTitle = fileName
+
+            if(!isFileSelected){
+                isFileSelected = true
+                binding.isFiledSelected = isFileSelected
+            }
+
         }
     }
-    fun launchUpload(){
-        lifecycleScope.launch {
-            /** Title and content **/
-            viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+    fun launchFileUpload(){
+        /** File Upload Part **/
+        val file = File(filePath)
+        val formFile = FormDataUtil.getAudioBody("audio",fileName,file)
 
-            /** File Upload Part **/
-            val file = File(filePath)
-            val formFile = FormDataUtil.getAudioBody("audio",fileName,file)
+        val call = RetrofitClient.retrofitOpenService
 
-            val call = RetrofitClient.retrofitOpenService
-
-            call.fileUploadClient(Integer.valueOf(viewModel.getUserId()),formFile)?.enqueue(object :
-                Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    Log.d("fileUploadClient","Success")
-                }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Log.d("fileUploadClient","failed : " + t.message.toString())
-                }
-            })
-        }
+        call.fileUploadClient(Integer.valueOf(viewModel.getUserId()),formFile)?.enqueue(object :
+            Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("fileUploadClient","Success")
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.d("fileUploadClient","failed : " + t.message.toString())
+            }
+        })
     }
     fun getRealPathFromUri(ctx: Context?, uri: Uri?): String{
         var realPath:String = ""
