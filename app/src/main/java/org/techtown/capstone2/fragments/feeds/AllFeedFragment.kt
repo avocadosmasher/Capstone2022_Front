@@ -33,8 +33,8 @@ class AllFeedFragment : Fragment() {
         offset = arrayOf(0,0)
         // If there is no change after the initialization, that must be coded here!
         postAdapter.listener = object : PostAdapterListener{
-            override fun onItemClick(holder: PostAdapter.ViewHolder?, view: View?, position: Int) {
-                TODO("Not yet implemented")
+            override fun onItemClick(holder: PostAdapter.ViewHolder?, view: View?, position: Int,postId:Int) {
+                TODO("글 자세히 화면으로 넘어가야함.")
             }
             override fun onReachedLastItem() {
                 when(viewModel.checkedLeft){

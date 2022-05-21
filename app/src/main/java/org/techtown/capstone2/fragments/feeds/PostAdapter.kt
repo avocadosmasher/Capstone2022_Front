@@ -36,7 +36,8 @@ class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: PostItemLayoutBinding): RecyclerView.ViewHolder(binding.root){
         init {
             itemView.setOnClickListener {
-                listener?.onItemClick(this,itemView,adapterPosition)
+                val postId = if(mainViewModel.checkedLeft) binding.allPost.id else binding.subPost.id
+                listener?.onItemClick(this,itemView,adapterPosition,postId.toInt())
             }
         }
         fun bind(item:Any){
