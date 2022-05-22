@@ -6,13 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.apollographql.apollo3.api.Optional
+import com.google.android.material.transition.MaterialElevationScale
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_all_feed.*
 import org.techtown.apollo.GetAllPostsQuery
 import org.techtown.apollo.GetSubscriberPostsQuery
 import org.techtown.capstone2.R
@@ -23,6 +27,7 @@ class AllFeedFragment : Fragment() {
 
     private lateinit var binding : FragmentAllFeedBinding
     private lateinit var offset: Array<Int>
+    private var isReachedLast = false
     private var offsetIndex = 0
     private val importSize = 10
     private val viewModel: MainViewModel by activityViewModels()
@@ -31,6 +36,15 @@ class AllFeedFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        /** Setting Animation Config **/
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
+        }
+
+        /** Adapter Setting **/
         postAdapter.mainViewModel = viewModel
 
         offsetIndex = 0
@@ -44,15 +58,18 @@ class AllFeedFragment : Fragment() {
                 findNavController().navigate(directions,extras)
             }
             override fun onReachedLastItem() {
-                when(viewModel.checkedLeft){
-                    true -> getAllPosts(offset[offsetIndex],importSize,true)
-                    false -> getSubPosts(offset[offsetIndex],importSize,true)
+                if(!isReachedLast){
+                    when(viewModel.checkedLeft){
+                        true -> getAllPosts(offset[offsetIndex],importSize,true)
+                        false -> getSubPosts(offset[offsetIndex],importSize,true)
+                    }
+                    offset[offsetIndex] += 1
                 }
-                offset[offsetIndex] += 1
             }
         }
         viewModel.iconSwitchListener = object : IconSwitchListener{
             override fun onIconSwitchChanged(state: Boolean) {
+                isReachedLast = false
                 offset[offsetIndex] = 0
 
                 viewModel.checkedLeft = state
@@ -68,7 +85,6 @@ class AllFeedFragment : Fragment() {
                 }
             }
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,6 +100,13 @@ class AllFeedFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+    }
+
     /** 전체 피드 관련 Method **/
     private fun addAllPosts(posts: List<GetAllPostsQuery.Post?>?){
         // Can be used to initialize or just add more data to the list.
@@ -95,9 +118,8 @@ class AllFeedFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             val response = viewModel.apolloClient.query(GetAllPostsQuery(toOptionalInt(off), toOptionalInt(size))).execute()
 
-            for(a in response.data?.getBoard?.posts!!){
-                Log.d("getAllPosts","offset : " + offset[offsetIndex]+ ", id : " + a?.id?:"null")
-            }
+            if(response.data?.getBoard?.posts?.size?:9 < 10) isReachedLast = true
+
             when(addTsetF){
                 true -> addAllPosts(response.data?.getBoard?.posts)
                 false -> setAllPosts(response.data?.getBoard?.posts)
@@ -122,11 +144,7 @@ class AllFeedFragment : Fragment() {
     private fun getSubPosts(off : Int, size : Int, addTsetF: Boolean){
         lifecycleScope.launchWhenResumed {
             val response = viewModel.apolloClient.query(GetSubscriberPostsQuery(toOptionalString("1"),toOptionalInt(off), toOptionalInt(size))).execute()
-
-            for(a in response.data?.getSubscriberPosts!!){
-                Log.d("getAllPosts",a?.id?:"null")
-            }
-
+            if(response.data?.getSubscriberPosts?.size?:9 < 10) isReachedLast = true
             when(addTsetF){
                 true -> addSubPosts(response.data?.getSubscriberPosts)
                 false -> setSubPosts(response.data?.getSubscriberPosts)
