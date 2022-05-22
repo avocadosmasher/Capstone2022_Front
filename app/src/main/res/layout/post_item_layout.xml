@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:elevation="0dp"
             android:clickable="true"
+            android:transitionName="@{@string/post_card_trainsition_name(viewModel.checkedLeft ? allPost.id : subPost.id)}"
             app:cardPreventCornerOverlap="false">
 
             <androidx.constraintlayout.widget.ConstraintLayout

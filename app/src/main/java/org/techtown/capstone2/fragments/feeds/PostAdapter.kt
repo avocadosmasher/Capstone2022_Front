@@ -8,6 +8,7 @@ import org.techtown.apollo.GetAllPostsQuery
 import org.techtown.apollo.GetSubscriberPostsQuery
 import org.techtown.capstone2.databinding.PostItemLayoutBinding
 import org.techtown.capstone2.viewmodel.MainViewModel
+import kotlin.properties.Delegates
 
 class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
@@ -34,10 +35,13 @@ class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     }
 
     inner class ViewHolder(private val binding: PostItemLayoutBinding): RecyclerView.ViewHolder(binding.root){
+        var postId by Delegates.notNull<Int>()
+
         init {
-            itemView.setOnClickListener {
-                val postId = if(mainViewModel.checkedLeft) binding.allPost.id else binding.subPost.id
-                listener?.onItemClick(this,itemView,adapterPosition,postId.toInt())
+            // cardView에 clickable 옵션을 줬기에 이렇게 해야함.
+            binding.cardView.setOnClickListener {
+                Log.d("PostItemClicked","Clicked1")
+                postId?.let { it1 -> listener?.onItemClick(this,binding.cardView,adapterPosition, it1) }
             }
         }
         fun bind(item:Any){
@@ -45,8 +49,10 @@ class PostAdapter() : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
                 viewModel = mainViewModel
                 if(item is GetAllPostsQuery.Post){
                     allPost = item
+                    postId = item.id.toInt()
                 }else if(item is GetSubscriberPostsQuery.GetSubscriberPost){
                     subPost = item
+                    postId = item.id.toInt()
                 }
             }
         }

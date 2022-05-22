@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20sp"
                 android:layout_gravity="center_vertical"
-                android:text="@{isFiledSelected ? musicTitle : }"
+                android:text="@{isFiledSelected ? musicTitle : null }"
                 tools:text="음악제목"/>
         </LinearLayout>
 

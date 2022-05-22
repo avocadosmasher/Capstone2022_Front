@@ -26,6 +26,9 @@
         android:name="org.techtown.capstone2.fragments.DetailedPostFragment"
         android:label="fragment_detailed_post"
         tools:layout="@layout/fragment_detailed_post" >
+        <argument
+            android:name="postId"
+            app:argType="integer"/>
         <action
             android:id="@+id/action_detailedPostFragment_to_profileFragment2"
             app:destination="@id/profileFragment2" />

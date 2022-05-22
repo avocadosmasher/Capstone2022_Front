@@ -8,10 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo3.api.Optional
+import kotlinx.android.synthetic.main.activity_main.*
 import org.techtown.apollo.GetAllPostsQuery
 import org.techtown.apollo.GetSubscriberPostsQuery
+import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.FragmentAllFeedBinding
 import org.techtown.capstone2.viewmodel.MainViewModel
 
@@ -34,7 +38,10 @@ class AllFeedFragment : Fragment() {
         // If there is no change after the initialization, that must be coded here!
         postAdapter.listener = object : PostAdapterListener{
             override fun onItemClick(holder: PostAdapter.ViewHolder?, view: View?, position: Int,postId:Int) {
-                TODO("글 자세히 화면으로 넘어가야함.")
+                val detailedPostTransitionName = getString(R.string.post_card_detail_transition_name)
+                val extras = FragmentNavigatorExtras((view to detailedPostTransitionName) as Pair<View, String>)
+                val directions = AllFeedFragmentDirections.actionAllFeedFragmentToDetailedPostFragment(postId)
+                findNavController().navigate(directions,extras)
             }
             override fun onReachedLastItem() {
                 when(viewModel.checkedLeft){

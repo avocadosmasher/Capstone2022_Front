@@ -55,31 +55,28 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             setHideMotionSpecResource(R.animator.fab_hide)
 
             setOnClickListener {
-                navigateTo(NavDir.WRITING)
+                navigateTo()
             }
         }
     }
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
-        when(destination.id){
-            R.id.allFeedFragment->{
-                setFabForFeed()
-            }
-            R.id.writingFragment->{
-                setFabForWriting()
-            }
+        if(destination.id == R.id.allFeedFragment){
+            setUtilsForFeed()
+        }else{
+            setUtilsForOthers()
         }
     }
-    private fun setFabForFeed(){
+    private fun setUtilsForFeed(){
         fab.show()
         icon_switch.visibility = View.VISIBLE
     }
-    private fun setFabForWriting(){
+    private fun setUtilsForOthers(){
         fab.visibility = View.INVISIBLE
         icon_switch.visibility = View.GONE
     }
 
-    private fun navigateTo(dir:NavDir){
+    private fun navigateTo(){
 
         currentNavigationFragment?.apply {
             exitTransition = MaterialElevationScale(false).apply {
@@ -90,18 +87,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
 
-        val directions = when(dir){
-            NavDir.DETAILED_POST->{
-                AllFeedFragmentDirections.actionAllFeedFragmentToDetailedPostFragment()
-            }
-            NavDir.WRITING->{
-                AllFeedFragmentDirections.actionAllFeedFragmentToWritingFragment()
-            }
-            NavDir.SETTING->{
-                AllFeedFragmentDirections.actionAllFeedFragmentToSettingFragment()
-            }
-            else -> null
-        }
+        val directions = AllFeedFragmentDirections.actionAllFeedFragmentToWritingFragment()
+
         if(directions != null){
             navController.navigate(directions)
         }
