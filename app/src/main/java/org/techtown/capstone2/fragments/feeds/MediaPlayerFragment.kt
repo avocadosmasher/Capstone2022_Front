@@ -9,20 +9,22 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.music_player.*
 import org.techtown.capstone2.R
 import java.lang.Exception
 
 class MediaPlayerFragment: Fragment() {
 
+    private var address = "http://133.186.247.141:5000/audio/"
     private var mp: MediaPlayer? = null
-    private var url: String? = null
+    private var title: String? = null
 
     companion object{
-        fun newInstance(url:String?) : MediaPlayerFragment {
+        fun newInstance(title:String?) : MediaPlayerFragment {
             val fragment = MediaPlayerFragment()
             val bundle = Bundle()
 
-            bundle.putString("url",url)
+            bundle.putString("title",title)
             fragment.arguments = bundle
 
             return fragment
@@ -31,11 +33,13 @@ class MediaPlayerFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        url = arguments?.getString("url")
+        title = arguments?.getString("title")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.music_player,container,false)
+
+        music_title.text = title
 
         val toggle = rootView.findViewById<ToggleButton>(R.id.toggleButton)
         val seekBar = rootView.findViewById<SeekBar>(R.id.seekBar)
@@ -46,7 +50,7 @@ class MediaPlayerFragment: Fragment() {
                     if(mp == null){
                         mp = MediaPlayer()
                         mp?.apply{
-                            setDataSource(url)
+                            setDataSource(address+title)
                             prepare()
                         }
                         initializeSeekBar(seekBar)

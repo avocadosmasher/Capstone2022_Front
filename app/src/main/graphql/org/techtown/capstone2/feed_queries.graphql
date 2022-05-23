@@ -34,15 +34,28 @@ query getPost($id:ID!){
         id
         title
         content
+        audio
         member{
             id
         }
         comments{
             member{
+                id
                 name
                 picture
             }
+            id
             content
+        }
+    }
+}
+query getComments($id:ID!){
+    getCommentsByPostId(postId: $id){
+        id
+        content
+        member{
+            id
+            name
         }
     }
 }

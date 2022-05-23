@@ -7,6 +7,9 @@
 
     <data>
         <variable
+            name="post"
+            type="org.techtown.apollo.GetPostQuery.GetPost" />
+        <variable
             name="viewModel"
             type="org.techtown.capstone2.viewmodel.MainViewModel" />
     </data>
@@ -38,6 +41,24 @@
                     android:layout_centerInParent="true"
                     android:text="글 자세히"
                     android:textSize="20sp"/>
+
+                <TextView
+                    android:id="@+id/detailed_post_update"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/detailed_post_delete"
+                    android:layout_marginRight="10sp"
+                    android:text="수정" />
+                <TextView
+                    android:id="@+id/detailed_post_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10sp"
+                    android:text="삭제"/>
             </RelativeLayout>
 
             <ScrollView
@@ -66,8 +87,47 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginRight="10sp"
+                            android:textAppearance="?attr/textAppearanceHeadline5"
                             android:text="Title"
                             android:textSize="20sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10sp"
+                            android:layout_gravity="center_vertical"
+                            android:text="저자 :"
+                            android:textSize="20sp"/>
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/detailed_post_writer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clickable="true">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <!-- app:glideSrc="" -->
+                                <ImageView
+                                    android:id="@+id/detailed_post_writer_profile_image"
+                                    android:layout_marginVertical="10sp"
+                                    android:layout_width="@dimen/post_profile_image_size"
+                                    android:layout_height="@dimen/post_profile_image_size"
+                                    app:glideCircularCrop="@{true}"
+                                    />
+                                <TextView
+                                    android:id="@+id/detailed_post_writer_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="10sp"
+                                    android:textAppearance="?attr/textAppearanceBody1"
+                                    tools:text="이름" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
 
                     <LinearLayout
@@ -85,29 +145,41 @@
                             android:id="@+id/detailed_post_content"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5sp"
+                            android:layout_marginTop="10sp"
                             android:layout_marginRight="10sp"
                             android:layout_marginBottom="15sp"
-                            android:text="\n\n\n\n\n a"
+                            android:text="a"
+                            android:lines="10"
                             android:textAlignment="textStart"
-                            android:textSize="15sp" />
+                            android:textSize="15sp"
+                            android:textAppearance="?attr/textAppearanceBody1"/>
                     </LinearLayout>
 
                     <FrameLayout
-                        android:id="@+id/music_player_container"
+                        android:id="@+id/detailed_post_music_player_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/detailed_post_leave_comment"
+                        android:id="@+id/detailed_post_comment_add_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="댓글작성"
                         android:layout_gravity="right"
                         android:layout_margin="10sp"/>
 
+                    <EditText
+                        android:id="@+id/detailed_post_comment_writing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="댓글을 입력해 주세요"
+                        android:textSize="15sp"
+                        android:layout_marginHorizontal="10sp"
+                        android:layout_marginBottom="10sp"
+                        android:background="@android:color/transparent"/>
+
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/detailed_post_comments"
+                        android:id="@+id/detailed_post_comments_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false" />

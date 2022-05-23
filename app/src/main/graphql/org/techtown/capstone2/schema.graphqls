@@ -16,6 +16,22 @@ type Comment {
   content: String!
 }
 
+type Like {
+  id: ID!
+
+  post: Post!
+
+  member: Member!
+}
+
+type LikeOutput {
+  post: Post!
+
+  member: Member!
+
+  likeCount: Int!
+}
+
 """
 Java 8 LocalDateTime Scalar
 """
@@ -38,7 +54,7 @@ type Member {
 input MemberInput {
   email: String!
 
-  picture: String
+  article: String
 
   name: String!
 }
@@ -58,7 +74,13 @@ type Mutation {
 
   deleteComment(id: ID!): Comment
 
+  addLike(postId: ID!, memberId: ID!): LikeOutput!
+
+  deleteLike(postId: ID!, memberId: ID!): LikeOutput!
+
   addMember(memberDto: MemberInput): Member
+
+  updateMember(id: ID!, memberDto: MemberInput): Member
 
   addSubscribe(fromMemberId: ID!, toMemberId: ID!): Subscribe
 
@@ -78,6 +100,8 @@ type Post {
 
   board: Board!
 
+  likeCount: Int!
+
   comments: [Comment!]
 
   createdAt: LocalDateTime!
@@ -92,7 +116,9 @@ type Query {
 
   getBoard(id: ID!): Board
 
-  comments: [Comment]
+  getCommentsByPostId(postId: ID!): [Comment!]
+
+  getLikeCountByPostId(postId: ID!): Int!
 
   getMember(id: ID!): Member
 
@@ -106,9 +132,9 @@ type Query {
 type Subscribe {
   id: ID!
 
-  fromMember: Member
+  fromMember: Member!
 
-  toMember: Member
+  toMember: Member!
 }
 
 input boardInput {
