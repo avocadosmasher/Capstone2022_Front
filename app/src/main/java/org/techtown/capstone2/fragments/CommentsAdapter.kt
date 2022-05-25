@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import org.techtown.apollo.GetCommentsQuery
 import org.techtown.apollo.GetPostQuery
 import org.techtown.capstone2.databinding.CommentItemLayoutBinding
 import org.techtown.capstone2.viewmodel.MainViewModel
@@ -12,7 +13,7 @@ class CommentsAdapter() : RecyclerView.Adapter<CommentsAdapter.ViewHolder>() {
 
     lateinit var mainViewModel:MainViewModel
     lateinit var listener:CommentsAdapterListener
-    val itemList = ArrayList<GetPostQuery.Comment>()
+    var itemList = ArrayList<GetCommentsQuery.GetCommentsByPostId>()
 
     override fun getItemCount() = itemList?.size
 
@@ -28,16 +29,17 @@ class CommentsAdapter() : RecyclerView.Adapter<CommentsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding:CommentItemLayoutBinding): RecyclerView.ViewHolder(binding.root){
         init {
-            binding.detailedPostCommentDelete.setOnClickListener {
-                listener?.onDeleteClick(binding.comments.id.toInt())
+            binding.detailedPostCommentDeleteButton.setOnClickListener {
+                binding.comments?.id?.toInt()?.let { it1 -> listener?.onDeleteClick(it1) }
             }
         }
-        fun bind(item:GetPostQuery.Comment){
+        fun bind(item:GetCommentsQuery.GetCommentsByPostId){
             binding.apply {
                 viewModel = mainViewModel
                 comments = item
-                if(comments.member.id.toInt() != mainViewModel.getUserId()){
-                    binding.detailedPostCommentDelete.visibility = View.GONE
+                comments
+                if(comments?.member?.id?.toInt() != mainViewModel.getUserId()){
+                    binding.detailedPostCommentDeleteButton.visibility = View.GONE
                 }
             }
         }

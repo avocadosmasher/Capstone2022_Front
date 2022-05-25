@@ -8,7 +8,7 @@
     <data>
         <variable
             name="comments"
-            type="org.techtown.apollo.GetPostQuery.Comment" />
+            type="org.techtown.apollo.GetCommentsQuery.GetCommentsByPostId"/>
         <variable
             name="viewModel"
             type="org.techtown.capstone2.viewmodel.MainViewModel" />
@@ -65,7 +65,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/detailed_post_comment_delete"
+                android:id="@+id/detailed_post_comment_delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"

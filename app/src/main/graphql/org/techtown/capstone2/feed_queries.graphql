@@ -37,6 +37,8 @@ query getPost($id:ID!){
         audio
         member{
             id
+            name
+            picture
         }
         comments{
             member{
@@ -56,6 +58,7 @@ query getComments($id:ID!){
         member{
             id
             name
+            picture
         }
     }
 }
@@ -63,6 +66,17 @@ query getComments($id:ID!){
 mutation addPost($postDto:postInput){
     addPost(postDto: $postDto){
         createdAt
+    }
+}
+
+mutation addComment($commentDto:commentInput!){
+    addComment(commentDto: $commentDto){
+        id
+    }
+}
+mutation deleteComment($commentId:ID!){
+    deleteComment(id: $commentId){
+        id
     }
 }
 
