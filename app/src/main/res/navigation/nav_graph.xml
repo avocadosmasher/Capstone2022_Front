@@ -30,8 +30,19 @@
             android:name="postId"
             app:argType="integer"/>
         <action
-            android:id="@+id/action_detailedPostFragment_to_profileFragment2"
-            app:destination="@id/profileFragment2" />
+            android:id="@+id/action_detailedPostFragment_to_profileFragment"
+            app:destination="@id/profileFragment">
+            <argument
+                android:name="userId"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_detailedPostFragment_to_writingFragment"
+            app:destination="@id/writingFragment" >
+            <argument
+                android:name="postId"
+                app:argType="integer"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -42,9 +53,10 @@
         android:id="@+id/writingFragment"
         android:name="org.techtown.capstone2.fragments.WritingFragment"
         android:label="fragment_writing"
-        tools:layout="@layout/fragment_writing" />
+        tools:layout="@layout/fragment_writing">
+    </fragment>
     <fragment
-        android:id="@+id/profileFragment2"
+        android:id="@+id/profileFragment"
         android:name="org.techtown.capstone2.fragments.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />

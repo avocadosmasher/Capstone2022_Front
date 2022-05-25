@@ -5,7 +5,9 @@
     tools:context=".fragments.ProfileFragment">
 
     <data>
-
+        <variable
+            name="profile"
+            type="" />
     </data>
     <ScrollView
         android:id="@+id/profile_scrollView"

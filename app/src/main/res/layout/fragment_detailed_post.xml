@@ -50,7 +50,8 @@
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/detailed_post_delete"
                     android:layout_marginRight="10sp"
-                    android:text="수정" />
+                    android:text="수정"
+                    android:clickable="true" />
                 <TextView
                     android:id="@+id/detailed_post_delete"
                     android:layout_width="wrap_content"
@@ -58,7 +59,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10sp"
-                    android:text="삭제"/>
+                    android:text="삭제"
+                    android:clickable="true"/>
             </RelativeLayout>
 
             <ScrollView

@@ -2,15 +2,23 @@ package org.techtown.capstone2.fragments.feeds
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.music_player.*
+import okhttp3.ResponseBody
 import org.techtown.capstone2.R
+import org.techtown.download.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import java.io.*
 import java.lang.Exception
 
 class MediaPlayerFragment: Fragment() {
@@ -43,6 +51,21 @@ class MediaPlayerFragment: Fragment() {
 
         val toggle = rootView.findViewById<ToggleButton>(R.id.toggleButton)
         val seekBar = rootView.findViewById<SeekBar>(R.id.seekBar)
+
+        audio_download_button.setOnClickListener {
+            val call = RetrofitClient.retrofitOpenService
+
+            call.fileDownloadClient("/" + title)?.enqueue(object:Callback<ResponseBody>{
+                override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+                    val success = writeResponseBodyToDisk(response.body())
+                    Log.d("FileDownLoad : ", " Success ")
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.d("FileDownLoad : ", "Failed(Reason : ${t.message})")
+                }
+            })
+        }
 
         toggle.setOnCheckedChangeListener { buttonView, isChecked ->
             when(isChecked){
@@ -94,5 +117,48 @@ class MediaPlayerFragment: Fragment() {
                 }
             }
         },0)
+    }
+    private fun writeResponseBodyToDisk(body: ResponseBody?): Boolean {
+        return try {
+            // todo change the file location/name according to your needs
+            val  downloadFile =
+                File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        .toString() + File.separator.toString() + "Over_the_Horizon.mp3")
+            var inputStream: InputStream? = null
+            var outputStream: OutputStream? = null
+
+            try {
+                val fileReader = ByteArray(4096)
+                val fileSize: Long = body?.contentLength()?:0
+                var fileSizeDownloaded: Long = 0
+                inputStream = body?.byteStream()
+                outputStream = FileOutputStream(downloadFile)
+                while (true) {
+                    val read: Int = inputStream?.read(fileReader)?:-1
+                    if (read == -1) {
+                        break
+                    }
+                    outputStream.write(fileReader, 0, read)
+                    fileSizeDownloaded += read.toLong()
+                    Log.d("FileDownload", "file download: $fileSizeDownloaded of $fileSize")
+                }
+
+                outputStream.flush()
+                true
+
+            } catch (e: IOException) {
+                false
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close()
+                }
+                if (outputStream != null) {
+                    outputStream.close()
+                }
+            }
+        } catch (e: IOException) {
+            false
+        }
     }
 }

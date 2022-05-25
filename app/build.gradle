@@ -59,6 +59,7 @@ dependencies {
     //로그를 남기기 위한 라이브러리
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 
+    // Okhttp 4.x version.
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
 
     //retrofit 통신을 위한 라이브러리

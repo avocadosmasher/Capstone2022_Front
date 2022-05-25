@@ -79,4 +79,9 @@ mutation deleteComment($commentId:ID!){
         id
     }
 }
+mutation deletePost($id:ID!){
+    deletePost(id: $id){
+        id
+    }
+}
 
