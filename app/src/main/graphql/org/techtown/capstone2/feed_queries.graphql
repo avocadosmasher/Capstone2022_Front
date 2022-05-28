@@ -63,6 +63,24 @@ query getComments($id:ID!){
     }
 }
 
+query getProfile($id:ID!){
+    getMember(id : $id){
+        id
+        email
+        name
+        picture
+        article
+        posts{
+            id
+            title
+        }
+    }
+}
+query getSubscriberCount($id:ID!){
+    getSubscribeCount(fromMemberId: $id)
+}
+
+
 mutation addPost($postDto:postInput){
     addPost(postDto: $postDto){
         createdAt
@@ -81,6 +99,23 @@ mutation deleteComment($commentId:ID!){
 }
 mutation deletePost($id:ID!){
     deletePost(id: $id){
+        id
+    }
+}
+
+mutation updateArticle($id:ID!, $memberDto:MemberInput){
+    updateMember(id: $id,memberDto: $memberDto){
+        id
+    }
+}
+
+mutation addSubscribe($fromMemberId:ID!,$toMemberId:ID!){
+    addSubscribe(fromMemberId: $fromMemberId,toMemberId: $toMemberId){
+        id
+    }
+}
+mutation deleteSubscribe($fromMemberId:ID!,$toMemeberId:ID!){
+    deleteSubscribe(fromMemberId: $fromMemberId,toMemberId: $toMemeberId){
         id
     }
 }

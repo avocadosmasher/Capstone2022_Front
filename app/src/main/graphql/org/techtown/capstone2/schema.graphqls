@@ -46,7 +46,9 @@ type Member {
 
   picture: String
 
-  posts: [Post]
+  posts: [Post!]
+
+  article: String
 
   comments: [Comment!]
 }

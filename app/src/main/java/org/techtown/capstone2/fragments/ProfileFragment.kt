@@ -6,7 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import org.techtown.capstone2.R
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
+import com.apollographql.apollo3.api.Optional
+import org.techtown.apollo.GetProfileQuery
+import org.techtown.apollo.UpdateArticleMutation
+import org.techtown.apollo.type.MemberInput
 import org.techtown.capstone2.databinding.FragmentProfileBinding
 import org.techtown.capstone2.viewmodel.MainViewModel
 
@@ -14,7 +19,10 @@ import org.techtown.capstone2.viewmodel.MainViewModel
 class ProfileFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
+    private val args:ProfileFragmentArgs by navArgs()
     private lateinit var binding:FragmentProfileBinding
+    private var isMyProfile = false
+    lateinit var profile: GetProfileQuery.GetMember
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,15 +31,70 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater,container,false)
 
-        TODO("프로필 화면으로 넘어올때 받아온 member ID  값을 통해서 어떤 member인지 확인.")
-        TODO("자신의 프로필일 경우에는 간단한 설명 부분 수정 활성화, 구독 버튼 Listener는 비활성화.")
-        TODO("프로필 관련 내용 GraphQL을 통해 받아오기. => 사진, 간단한 설명글, 구독 수, 글 목록(제목만 받아와서 나열하자).")
-        TODO("GraphQL로 프로필 내용 및 글 목록 받아오는 함수.")
-        TODO("글 목록 Click Listener.")
-        TODO("구독 Mutation")
-        TODO("간단한 설명(article) Mutation")
+        /** 프로필 정보 받아오기 **/
+        gqlGetProfile()
 
+        /** 프로필 화면으로 넘어올때 받아온 member ID값을 통해서 어떤 member인지 확인 **/
+        if(args.userId == viewModel.getUserId()) isMyProfile = true
+
+        /** 구독 관련 및 자기소개  부분 **/
+        if(isMyProfile){
+            binding.apply {
+                profileEditButton.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked){
+                        gqlSetArticle()
+                        profileArticle.isEnabled = false
+                    }else {
+                        profileArticle.isEnabled = true
+                    }
+                }
+                profileSubscribeButton.isClickable = false
+            }
+        }else{
+            binding.profileSubscribeButton.setOnCheckedChangeListener { buttonView, isChecked ->
+                if(isChecked){
+                    gqlAddSubscribe()
+                }else{
+                    gqlDeleteSubscribe()
+                }
+            }
+        }
+        gqlGetSubscribeNum()
+
+        TODO("글 목록 받아오는 함수.")
+        TODO("글 목록 Click Listener.")
 
         return binding.root
     }
+
+    private fun gqlGetProfile(){
+        lifecycleScope.launchWhenResumed {
+            val response = viewModel.apolloClient.query(GetProfileQuery(args.userId.toString())).execute()
+            response.data?.getMember?.let { profile = it }
+        }
+    }
+
+    private fun gqlSetArticle(){
+        lifecycleScope.launchWhenResumed {
+            val response = viewModel.apolloClient.mutation(UpdateArticleMutation(profile.id,
+                Optional.Present(MemberInput(
+                    email = profile.email,
+                    name = profile.name,
+                    article = Optional.Present(profile.article))
+                ))
+            )
+        }
+    }
+
+    private fun gqlAddSubscribe(){
+
+    }
+    private fun gqlGetSubscribeNum(){
+
+    }
+    private fun gqlDeleteSubscribe(){
+
+    }
+
+    private fun setSubscriberNum(num:Int){ binding.profileSubscriberNum.text = num.toString()}
 }

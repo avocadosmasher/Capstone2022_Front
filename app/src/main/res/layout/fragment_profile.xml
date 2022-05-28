@@ -7,7 +7,7 @@
     <data>
         <variable
             name="profile"
-            type="" />
+            type="org.techtown.apollo.GetProfileQuery.GetMember"/>
     </data>
     <ScrollView
         android:id="@+id/profile_scrollView"
@@ -49,6 +49,26 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10sp">
+                <ToggleButton
+                    android:id="@+id/profile_subscribe_button"
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:background="@drawable/ic_subsciption_button"
+                    android:textOff=" "
+                    android:textOn=" "
+                    android:layout_gravity="center_horizontal" />
+                <TextView
+                    android:id="@+id/profile_subscriber_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="10"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -70,6 +90,26 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="20sp"
+                    android:text="이메일 : " />
+
+                <TextView
+                    android:id="@+id/profile_email"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="Test Email" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10sp">
                 <TextView
@@ -79,15 +119,17 @@
                     android:layout_gravity="center_vertical"
                     android:text="간단소개" />
 
-                <ImageView
-                    android:id="@+id/imageView"
+                <ToggleButton
+                    android:id="@+id/profile_edit_button"
                     android:layout_width="18sp"
                     android:layout_height="18sp"
-                    android:src="@drawable/ic_edit_off"/>
+                    android:background="@drawable/ic_edit_button"
+                    android:textOff=" "
+                    android:textOn=" "/>
             </LinearLayout>
 
             <EditText
-                android:id="@+id/editTextTextPersonName"
+                android:id="@+id/profile_article"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20sp"
