@@ -44,16 +44,6 @@ class DetailedPostFragment : Fragment() {
             scrimColor = Color.TRANSPARENT
             setAllContainerColors(requireContext().themeColor(R.attr.colorSurface))
         }
-
-        commentsAdapter.listener = object: CommentsAdapterListener{
-            /** 댓글 삭제 **/
-            override fun onDeleteClick(commentId: Int) {
-                lifecycleScope.launchWhenResumed {
-                    viewModel.apolloClient.mutation(DeleteCommentMutation(commentId = commentId.toString()))
-                    gqlGetComments()
-                }
-            }
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -73,6 +63,7 @@ class DetailedPostFragment : Fragment() {
         /** 프로필 CardView 클릭 Listener **/
         binding.detailedPostCardView.setOnClickListener {
             binding?.post?.let {
+                // ProfileFragment로 이동.
                 findNavController().navigate(DetailedPostFragmentDirections.actionDetailedPostFragmentToProfileFragment(it.member.id.toInt()))
             }
         }
@@ -122,6 +113,16 @@ class DetailedPostFragment : Fragment() {
             gqlGetComments()
         }
 
+        commentsAdapter.listener = object: CommentsAdapterListener{
+            /** 댓글 삭제 **/
+            override fun onDeleteClick(commentId: Int) {
+                lifecycleScope.launchWhenResumed {
+                    viewModel.apolloClient.mutation(DeleteCommentMutation(commentId = commentId.toString()))
+                    gqlGetComments()
+                }
+            }
+        }
+
         return binding.root
     }
 
@@ -143,12 +144,5 @@ class DetailedPostFragment : Fragment() {
             val response = viewModel.apolloClient.query(GetPostQuery(args.postId.toString())).execute()
             binding.post = response.data?.getPost
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        /** 다른 Fragment 갔다가 다시 돌아왔을때 갱신 **/
-        gqlGetPost()
-        gqlGetComments()
     }
 }
