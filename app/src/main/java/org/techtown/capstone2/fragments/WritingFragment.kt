@@ -131,6 +131,7 @@ class WritingFragment : Fragment() {
             Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("fileUploadClient","Success")
+                findNavController().popBackStack()
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Log.d("fileUploadClient","failed : " + t.message.toString())

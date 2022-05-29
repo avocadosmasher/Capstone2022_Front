@@ -2,11 +2,13 @@ package org.techtown.capstone2.fragments
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -33,6 +35,9 @@ class DetailedPostFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private val args: DetailedPostFragmentArgs by navArgs()
     private val commentsAdapter = CommentsAdapter()
+    val liveData:LiveData<GetPostQuery> = liveData {
+        emit()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +55,10 @@ class DetailedPostFragment : Fragment() {
         // Inflate the layout for this fragment
         binding =  FragmentDetailedPostBinding.inflate(inflater,container,false)
 
+        binding.detailedPostBackButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         /** RecyclerView를 위한 Configuration **/
         val layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
         binding.detailedPostCommentsContainer.apply {
@@ -61,8 +70,9 @@ class DetailedPostFragment : Fragment() {
         gqlGetPost()
 
         /** 프로필 CardView 클릭 Listener **/
-        binding.detailedPostCardView.setOnClickListener {
+        binding.detailedPostWriter.setOnClickListener {
             binding?.post?.let {
+                Log.d("PostClick","클릭")
                 // ProfileFragment로 이동.
                 findNavController().navigate(DetailedPostFragmentDirections.actionDetailedPostFragmentToProfileFragment(it.member.id.toInt()))
             }
@@ -109,19 +119,23 @@ class DetailedPostFragment : Fragment() {
                 )).execute()
 
                 binding.detailedPostCommentWriting.text.clear()
+                gqlGetComments()
             }
-            gqlGetComments()
+
         }
 
         commentsAdapter.listener = object: CommentsAdapterListener{
             /** 댓글 삭제 **/
             override fun onDeleteClick(commentId: Int) {
+                Log.d("onDelete","Click")
+                Log.d("onDelete","${commentId}")
                 lifecycleScope.launchWhenResumed {
-                    viewModel.apolloClient.mutation(DeleteCommentMutation(commentId = commentId.toString()))
+                    viewModel.apolloClient.mutation(DeleteCommentMutation(commentId = commentId.toString())).execute()
                     gqlGetComments()
                 }
             }
         }
+        commentsAdapter.mainViewModel = viewModel
 
         return binding.root
     }
@@ -138,6 +152,7 @@ class DetailedPostFragment : Fragment() {
         val diffResult = DiffUtil.calculateDiff(CommentsDiffUtil(commentsAdapter.itemList,comments))
         diffResult.dispatchUpdatesTo(commentsAdapter)
         commentsAdapter.itemList = ArrayList(comments)
+        //commentsAdapter.notifyDataSetChanged()
     }
     private fun gqlGetPost(){
         lifecycleScope.launchWhenResumed {

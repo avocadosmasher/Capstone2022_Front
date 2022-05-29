@@ -9,12 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.music_player.*
 import okhttp3.ResponseBody
 import org.techtown.capstone2.R
+import org.techtown.capstone2.databinding.MusicPlayerBinding
 import org.techtown.download.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,6 +28,7 @@ class MediaPlayerFragment: Fragment() {
     private var address = "http://133.186.247.141:5000/audio/"
     private var mp: MediaPlayer? = null
     private var title: String? = null
+    private lateinit var binding:MusicPlayerBinding
 
     companion object{
         fun newInstance(title:String?) : MediaPlayerFragment {
@@ -45,14 +48,13 @@ class MediaPlayerFragment: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.music_player,container,false)
+        binding = MusicPlayerBinding.inflate(layoutInflater,container,false)
 
-        music_title.text = title
+        title?.let { Log.d("Title", it) }
 
-        val toggle = rootView.findViewById<ToggleButton>(R.id.toggleButton)
-        val seekBar = rootView.findViewById<SeekBar>(R.id.seekBar)
+        binding.musicTitle.text = title
 
-        audio_download_button.setOnClickListener {
+        binding.audioDownloadButton.setOnClickListener {
             val call = RetrofitClient.retrofitOpenService
 
             call.fileDownloadClient("/" + title)?.enqueue(object:Callback<ResponseBody>{
@@ -67,7 +69,7 @@ class MediaPlayerFragment: Fragment() {
             })
         }
 
-        toggle.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.toggleButton.setOnCheckedChangeListener { buttonView, isChecked ->
             when(isChecked){
                 true -> {
                     if(mp == null){
@@ -76,7 +78,7 @@ class MediaPlayerFragment: Fragment() {
                             setDataSource(address+title)
                             prepare()
                         }
-                        initializeSeekBar(seekBar)
+                        initializeSeekBar(binding.seekBar)
                     }
                     mp?.start()
                 }
@@ -86,7 +88,7 @@ class MediaPlayerFragment: Fragment() {
             }
         }
 
-        seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+        binding.seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if(fromUser) mp?.seekTo(progress)
             }
@@ -100,7 +102,7 @@ class MediaPlayerFragment: Fragment() {
             }
         })
 
-        return rootView
+        return binding.root
     }
 
     fun initializeSeekBar(seekBar: SeekBar){

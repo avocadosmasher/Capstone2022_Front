@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.techtown.apollo.GetCommentsQuery
 import org.techtown.apollo.GetPostQuery
 import org.techtown.capstone2.databinding.CommentItemLayoutBinding
+import org.techtown.capstone2.databinding.CommentItemLayoutBindingImpl
 import org.techtown.capstone2.viewmodel.MainViewModel
 
 class CommentsAdapter() : RecyclerView.Adapter<CommentsAdapter.ViewHolder>() {
@@ -37,7 +38,7 @@ class CommentsAdapter() : RecyclerView.Adapter<CommentsAdapter.ViewHolder>() {
             binding.apply {
                 viewModel = mainViewModel
                 comments = item
-                comments
+
                 if(comments?.member?.id?.toInt() != mainViewModel.getUserId()){
                     binding.detailedPostCommentDeleteButton.visibility = View.GONE
                 }

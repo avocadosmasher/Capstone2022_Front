@@ -1,6 +1,7 @@
 package org.techtown.capstone2.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,8 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater,container,false)
 
+        binding.profileArticle.isEnabled = false
+
         val layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
         binding.profilePostList.layoutManager = layoutManager
         binding.profilePostList.adapter = profilePostListAdapter
@@ -49,11 +52,12 @@ class ProfileFragment : Fragment() {
         if(isMyProfile){
             binding.apply {
                 profileEditButton.setOnCheckedChangeListener { buttonView, isChecked ->
+
                     if (isChecked){
+                        profileArticle.isEnabled = true
+                    }else {
                         gqlSetArticle()
                         profileArticle.isEnabled = false
-                    }else {
-                        profileArticle.isEnabled = true
                     }
                 }
                 profileSubscribeButton.isClickable = false
@@ -67,7 +71,6 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
-        gqlGetSubscribeNum()
 
         profilePostListAdapter.listener = object : ProfilePostListAdapterListener{
             override fun onItemClick(
@@ -91,20 +94,24 @@ class ProfileFragment : Fragment() {
             val response = viewModel.apolloClient.query(GetProfileQuery(args.userId.toString())).execute()
             response.data?.getMember?.let { profile = it }
 
+            binding.profile = profile
+
             /** 글 목록을 받아옴 **/
             setPostListItems()
+            /** 비동기 실행으로 인한 Subscriber 수는 여기서 받도록. **/
+            gqlGetSubscribeNum()
         }
     }
 
     private fun gqlSetArticle(){
         lifecycleScope.launchWhenResumed {
-            val response = viewModel.apolloClient.mutation(UpdateArticleMutation(profile.id,
+            viewModel.apolloClient.mutation(UpdateArticleMutation(profile.id,
                 Optional.Present(MemberInput(
                     email = profile.email,
                     name = profile.name,
-                    article = Optional.Present(profile.article))
+                    article = Optional.Present(binding.profileArticle.text.toString()))
                 ))
-            )
+            ).execute()
         }
     }
 
@@ -139,5 +146,6 @@ class ProfileFragment : Fragment() {
                 addAll(it)
             }
         }
+        profilePostListAdapter.notifyDataSetChanged()
     }
 }

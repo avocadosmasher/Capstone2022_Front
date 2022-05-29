@@ -85,7 +85,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:text="Test Name" />
+                    android:text="@{profile.name}"
+                    tools:text="Test Name"/>
             </LinearLayout>
 
             <LinearLayout
@@ -104,7 +105,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:text="Test Email" />
+                    android:text="@{profile.email}"
+                    tools:text="Test Email"/>
 
             </LinearLayout>
 
@@ -133,12 +135,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20sp"
-                android:editable="false"
                 android:ems="10"
                 android:inputType="none"
-                android:text="자신의 소개를 입력해주세요"
                 android:background="@android:color/transparent"
-                android:layout_marginBottom="20sp"/>
+                android:layout_marginBottom="20sp"
+                android:text="@{profile.article}"
+                android:hint="자기 소개를 입력해 주세요"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/profile_postList"

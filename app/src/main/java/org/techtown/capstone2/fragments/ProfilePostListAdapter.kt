@@ -26,7 +26,10 @@ class ProfilePostListAdapter() : RecyclerView.Adapter<ProfilePostListAdapter.Vie
     inner class ViewHolder(private val binding: ProfilePostItemLayoutBinding):RecyclerView.ViewHolder(binding.root){
         init {
             binding.profilePostItemTitle.setOnClickListener {
-                listener?.onItemClick(this,binding.root,adapterPosition,binding.post.id.toInt())
+                binding?.post?.id?.let { it1 ->
+                    listener?.onItemClick(this,binding.root,adapterPosition,
+                        it1.toInt())
+                }
             }
         }
         fun bind(item:GetProfileQuery.Post){
