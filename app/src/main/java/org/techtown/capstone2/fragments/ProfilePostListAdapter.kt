@@ -9,6 +9,7 @@ import org.techtown.capstone2.databinding.ProfilePostItemLayoutBinding
 class ProfilePostListAdapter() : RecyclerView.Adapter<ProfilePostListAdapter.ViewHolder>() {
 
     val itemList = ArrayList<GetProfileQuery.Post>()
+    lateinit var listener:ProfilePostListAdapterListener
 
     override fun getItemCount() = itemList.size ?:0
 
@@ -25,10 +26,9 @@ class ProfilePostListAdapter() : RecyclerView.Adapter<ProfilePostListAdapter.Vie
     inner class ViewHolder(private val binding: ProfilePostItemLayoutBinding):RecyclerView.ViewHolder(binding.root){
         init {
             binding.profilePostItemTitle.setOnClickListener {
-
+                listener?.onItemClick(this,binding.root,adapterPosition,binding.post.id.toInt())
             }
         }
-
         fun bind(item:GetProfileQuery.Post){
             binding.post = item
         }

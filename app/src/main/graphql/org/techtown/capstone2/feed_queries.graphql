@@ -77,7 +77,7 @@ query getProfile($id:ID!){
     }
 }
 query getSubscriberCount($id:ID!){
-    getSubscribeCount(fromMemberId: $id)
+    getSubscriberCount(toMemberId: $id)
 }
 
 
@@ -111,12 +111,12 @@ mutation updateArticle($id:ID!, $memberDto:MemberInput){
 
 mutation addSubscribe($fromMemberId:ID!,$toMemberId:ID!){
     addSubscribe(fromMemberId: $fromMemberId,toMemberId: $toMemberId){
-        id
+        subscriberCount
     }
 }
 mutation deleteSubscribe($fromMemberId:ID!,$toMemeberId:ID!){
     deleteSubscribe(fromMemberId: $fromMemberId,toMemberId: $toMemeberId){
-        id
+        subscriberCount
     }
 }
 

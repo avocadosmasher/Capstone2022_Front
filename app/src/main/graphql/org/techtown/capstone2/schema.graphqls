@@ -84,9 +84,9 @@ type Mutation {
 
   updateMember(id: ID!, memberDto: MemberInput): Member
 
-  addSubscribe(fromMemberId: ID!, toMemberId: ID!): Subscribe
+  addSubscribe(fromMemberId: ID!, toMemberId: ID!): SubscribeOutput
 
-  deleteSubscribe(fromMemberId: ID!, toMemberId: ID!): Subscribe
+  deleteSubscribe(fromMemberId: ID!, toMemberId: ID!): SubscribeOutput
 }
 
 type Post {
@@ -128,7 +128,7 @@ type Query {
 
   getSubscriberList(id: ID!): [Member!]
 
-  getSubscribeCount(fromMemberId: ID!): Int!
+  getSubscriberCount(toMemberId: ID!): Int!
 }
 
 type Subscribe {
@@ -137,6 +137,14 @@ type Subscribe {
   fromMember: Member!
 
   toMember: Member!
+}
+
+type SubscribeOutput {
+  fromMember: Member!
+
+  toMember: Member!
+
+  subscriberCount: Int!
 }
 
 input boardInput {

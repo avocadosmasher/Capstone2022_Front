@@ -80,8 +80,8 @@ class DetailedPostFragment : Fragment() {
         }else{
             /** 수정 버튼 Listener **/
             binding.detailedPostUpdate.setOnClickListener {
-                binding?.let{
-                    findNavController().navigate(DetailedPostFragmentDirections.actionDetailedPostFragmentToWritingFragment(it.post.id.toInt()))
+                binding?.post?.let{
+                    findNavController().navigate(DetailedPostFragmentDirections.actionDetailedPostFragmentToWritingFragment(it.id.toInt()))
                 }
             }
             /** 삭제 버튼 Listener **/

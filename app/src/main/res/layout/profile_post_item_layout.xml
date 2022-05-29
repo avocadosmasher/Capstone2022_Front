@@ -12,7 +12,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:transitionName="@{@string/post_list_transition_name(post.id)}">
         
         <TextView
             android:id="@+id/profile_post_item_title"

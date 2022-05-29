@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/rdd04/AndroidStudioProjects/Capstone2022_Front/app/src/main/res/layout/fragment_detailed_post.xml" value="0.1358695652173913" />
+        <entry key="..\:/Users/rdd04/AndroidStudioProjects/Capstone2022_Front/app/src/main/res/layout/fragment_profile.xml" value="0.4" />
+        <entry key="..\:/Users/rdd04/AndroidStudioProjects/Capstone2022_Front/app/src/main/res/layout/post_item_layout.xml" value="0.19895833333333332" />
+        <entry key="..\:/Users/rdd04/AndroidStudioProjects/Capstone2022_Front/app/src/main/res/layout/profile_post_item_layout.xml" value="0.1" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

@@ -59,5 +59,8 @@
         <argument
             android:name="userId"
             app:argType="integer"/>
+        <action
+            android:id="@+id/action_profileFragment_to_detailedPostFragment"
+            app:destination="@id/detailedPostFragment" />
     </fragment>
 </navigation>

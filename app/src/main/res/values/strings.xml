@@ -8,4 +8,7 @@
     <!--DetailedPostFragment-->
     <string name="post_card_trainsition_name">post_card_%1$s</string>
     <string name="post_card_detail_transition_name">post_card_detail</string>
+
+    <!--ProfilePostList-->
+    <string name="post_list_transition_name">post_list_%1$s</string>
 </resources>
