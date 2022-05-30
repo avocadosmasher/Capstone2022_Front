@@ -129,6 +129,8 @@ type Query {
   getSubscriberList(id: ID!): [Member!]
 
   getSubscriberCount(toMemberId: ID!): Int!
+
+  isSubscribed(fromMemberId: ID!, toMemberId: ID!): Boolean!
 }
 
 type Subscribe {

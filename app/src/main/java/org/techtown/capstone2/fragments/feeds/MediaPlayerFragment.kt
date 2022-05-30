@@ -57,7 +57,7 @@ class MediaPlayerFragment: Fragment() {
         binding.audioDownloadButton.setOnClickListener {
             val call = RetrofitClient.retrofitOpenService
 
-            call.fileDownloadClient("/" + title)?.enqueue(object:Callback<ResponseBody>{
+            call.fileDownloadClient("audio/" + title)?.enqueue(object:Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                     val success = writeResponseBodyToDisk(response.body())
                     Log.d("FileDownLoad : ", " Success ")
@@ -126,7 +126,7 @@ class MediaPlayerFragment: Fragment() {
             val  downloadFile =
                 File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        .toString() + File.separator.toString() + "Over_the_Horizon.mp3")
+                        .toString() + File.separator.toString() + title)
             var inputStream: InputStream? = null
             var outputStream: OutputStream? = null
 

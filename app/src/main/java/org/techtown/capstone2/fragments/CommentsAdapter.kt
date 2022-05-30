@@ -5,9 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import org.techtown.apollo.GetCommentsQuery
-import org.techtown.apollo.GetPostQuery
 import org.techtown.capstone2.databinding.CommentItemLayoutBinding
-import org.techtown.capstone2.databinding.CommentItemLayoutBindingImpl
 import org.techtown.capstone2.viewmodel.MainViewModel
 
 class CommentsAdapter() : RecyclerView.Adapter<CommentsAdapter.ViewHolder>() {

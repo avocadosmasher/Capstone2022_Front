@@ -34,11 +34,7 @@
             app:destination="@id/profileFragment"/>
         <action
             android:id="@+id/action_detailedPostFragment_to_writingFragment"
-            app:destination="@id/writingFragment" >
-            <argument
-                android:name="postId"
-                app:argType="integer"/>
-        </action>
+            app:destination="@id/writingFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -50,6 +46,9 @@
         android:name="org.techtown.capstone2.fragments.WritingFragment"
         android:label="fragment_writing"
         tools:layout="@layout/fragment_writing">
+        <argument
+            android:name="updatePostId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"

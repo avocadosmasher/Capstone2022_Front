@@ -20,6 +20,12 @@ import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.android.synthetic.main.fragment_detailed_post.*
 import kotlinx.android.synthetic.main.fragment_writing.*
 import kotlinx.android.synthetic.main.fragment_writing.WritingView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
+import okhttp3.internal.wait
 import org.techtown.apollo.*
 import org.techtown.apollo.type.CommentInput
 import org.techtown.capstone2.R
@@ -35,9 +41,6 @@ class DetailedPostFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private val args: DetailedPostFragmentArgs by navArgs()
     private val commentsAdapter = CommentsAdapter()
-    val liveData:LiveData<GetPostQuery> = liveData {
-        emit()
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,11 +52,44 @@ class DetailedPostFragment : Fragment() {
             scrimColor = Color.TRANSPARENT
             setAllContainerColors(requireContext().themeColor(R.attr.colorSurface))
         }
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding =  FragmentDetailedPostBinding.inflate(inflater,container,false)
+
+        /** GetPost를 통해서 Post 정보 불러오기 **/
+        lifecycleScope.launchWhenResumed {
+            val response = viewModel.apolloClient.query(GetPostQuery(args.postId.toString())).execute()
+            binding.post = response.data?.getPost
+
+            /** Music Player Fragment를 FrameLayout에 적용 **/
+            val frag = MediaPlayerFragment.newInstance(response.data?.getPost?.audio)
+            parentFragmentManager.beginTransaction().replace(R.id.detailed_post_music_player_container,frag).commit()
+
+            /** 본인이 작성한 글인지 확인 **/
+            // 수정, 삭제 버튼의 활성화 여부를 결정합시다.
+
+            if(viewModel.getUserId() == response.data?.getPost?.member?.id?.toInt()){
+                binding.detailedPostUpdate.visibility=View.VISIBLE
+                binding.detailedPostDelete.visibility=View.VISIBLE
+                /** 수정 버튼 Listener **/
+                binding.detailedPostUpdate.setOnClickListener {
+                    binding?.post?.let{
+                        findNavController().navigate(DetailedPostFragmentDirections.actionDetailedPostFragmentToWritingFragment(it.id.toInt()))
+                    }
+                }
+                /** 삭제 버튼 Listener **/
+                binding.detailedPostDelete.setOnClickListener {
+                    lifecycleScope.launchWhenResumed {
+                        viewModel.apolloClient.mutation(DeletePostMutation(args.postId.toString())).execute()
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+        }
 
         binding.detailedPostBackButton.setOnClickListener {
             findNavController().popBackStack()
@@ -66,9 +102,6 @@ class DetailedPostFragment : Fragment() {
             this.adapter = commentsAdapter
         }
 
-        /** GetPost를 통해서 Post 정보 불러오기 **/
-        gqlGetPost()
-
         /** 프로필 CardView 클릭 Listener **/
         binding.detailedPostWriter.setOnClickListener {
             binding?.post?.let {
@@ -80,32 +113,6 @@ class DetailedPostFragment : Fragment() {
 
         /** 댓글 불러오기. **/
         gqlGetComments()
-
-        /** 본인이 작성한 글인지 확인 **/
-        // 수정, 삭제 버튼의 활성화 여부를 결정합시다.
-        if(viewModel.getUserId() != binding.post?.member?.id?.toInt()){
-            // 타인이 작성한 글.
-            binding.detailedPostUpdate.visibility=View.GONE
-            binding.detailedPostDelete.visibility=View.GONE
-        }else{
-            /** 수정 버튼 Listener **/
-            binding.detailedPostUpdate.setOnClickListener {
-                binding?.post?.let{
-                    findNavController().navigate(DetailedPostFragmentDirections.actionDetailedPostFragmentToWritingFragment(it.id.toInt()))
-                }
-            }
-            /** 삭제 버튼 Listener **/
-            binding.detailedPostDelete.setOnClickListener {
-                lifecycleScope.launchWhenResumed {
-                    viewModel.apolloClient.mutation(DeletePostMutation(args.postId.toString()))
-                }
-                findNavController().popBackStack()
-            }
-        }
-
-        /** Music Player Fragment를 FrameLayout에 적용 **/
-        val frag = MediaPlayerFragment.newInstance(binding.post?.audio)
-        parentFragmentManager.beginTransaction().replace(R.id.detailed_post_music_player_container,frag).commit()
 
         /** 댓글 작성 부분 **/
         binding.detailedPostCommentAddButton.setOnClickListener {
@@ -127,8 +134,7 @@ class DetailedPostFragment : Fragment() {
         commentsAdapter.listener = object: CommentsAdapterListener{
             /** 댓글 삭제 **/
             override fun onDeleteClick(commentId: Int) {
-                Log.d("onDelete","Click")
-                Log.d("onDelete","${commentId}")
+
                 lifecycleScope.launchWhenResumed {
                     viewModel.apolloClient.mutation(DeleteCommentMutation(commentId = commentId.toString())).execute()
                     gqlGetComments()
@@ -153,11 +159,5 @@ class DetailedPostFragment : Fragment() {
         diffResult.dispatchUpdatesTo(commentsAdapter)
         commentsAdapter.itemList = ArrayList(comments)
         //commentsAdapter.notifyDataSetChanged()
-    }
-    private fun gqlGetPost(){
-        lifecycleScope.launchWhenResumed {
-            val response = viewModel.apolloClient.query(GetPostQuery(args.postId.toString())).execute()
-            binding.post = response.data?.getPost
-        }
     }
 }

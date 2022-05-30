@@ -22,7 +22,8 @@
                 android:layout_height="wrap_content"
                 app:isw_icon_left="@drawable/ic_following"
                 app:isw_icon_right="@drawable/ic_search"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10sp">
 
             </com.polyak.iconswitch.IconSwitch>
 

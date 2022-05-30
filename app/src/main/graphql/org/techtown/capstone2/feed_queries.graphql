@@ -51,6 +51,17 @@ query getPost($id:ID!){
         }
     }
 }
+query isSubscribed($fromMemberId: ID!,$toMemberId: ID!){
+    isSubscribed(fromMemberId: $fromMemberId,toMemberId: $toMemberId)
+}
+query getUpdatePost($id:ID!){
+    getPost(id: $id){
+        id
+        title
+        content
+        audio
+    }
+}
 query getComments($id:ID!){
     getCommentsByPostId(postId: $id){
         id

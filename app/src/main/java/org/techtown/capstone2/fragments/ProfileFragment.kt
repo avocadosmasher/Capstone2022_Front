@@ -36,6 +36,10 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater,container,false)
 
+        binding.profileBackButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         binding.profileArticle.isEnabled = false
 
         val layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
@@ -48,26 +52,36 @@ class ProfileFragment : Fragment() {
         /** 프로필 화면으로 넘어올때 받아온 member ID값을 통해서 어떤 member인지 확인 **/
         if(args.userId == viewModel.getUserId()) isMyProfile = true
 
-        /** 구독 관련 및 자기소개  부분 **/
-        if(isMyProfile){
-            binding.apply {
-                profileEditButton.setOnCheckedChangeListener { buttonView, isChecked ->
+        lifecycleScope.launchWhenResumed {
+            val response = viewModel.apolloClient.query(IsSubscribedQuery(viewModel.getUserId().toString(),args.userId.toString())).execute()
+            response.data?.let {
 
-                    if (isChecked){
-                        profileArticle.isEnabled = true
-                    }else {
-                        gqlSetArticle()
-                        profileArticle.isEnabled = false
+                binding.profileSubscribeButton.isChecked = it.isSubscribed
+
+                /** 구독 관련 및 자기소개  부분 **/
+                if(isMyProfile){
+                    binding.apply {
+
+                        profileEditButton.setOnCheckedChangeListener { buttonView, isChecked ->
+
+                            if (isChecked){
+                                profileArticle.isEnabled = true
+                            }else {
+                                gqlSetArticle()
+                                profileArticle.isEnabled = false
+                            }
+                        }
+                        profileSubscribeButton.isClickable = false
                     }
-                }
-                profileSubscribeButton.isClickable = false
-            }
-        }else{
-            binding.profileSubscribeButton.setOnCheckedChangeListener { buttonView, isChecked ->
-                if(isChecked){
-                    gqlAddSubscribe()
                 }else{
-                    gqlDeleteSubscribe()
+                    binding.profileEditButton.isClickable = false
+                    binding.profileSubscribeButton.setOnCheckedChangeListener { buttonView, isChecked ->
+                        if(isChecked){
+                            gqlAddSubscribe()
+                        }else{
+                            gqlDeleteSubscribe()
+                        }
+                    }
                 }
             }
         }

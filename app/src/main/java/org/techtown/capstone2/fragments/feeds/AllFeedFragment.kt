@@ -1,6 +1,7 @@
 package org.techtown.capstone2.fragments.feeds
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ class AllFeedFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("AllFeedFrag","onCreate")
 
         /** Setting Animation Config **/
         exitTransition = MaterialElevationScale(false).apply {
@@ -84,6 +86,10 @@ class AllFeedFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Log.d("AllFeedFrag","onCreateView")
+        offset[offsetIndex] = 0
+        isReachedLast = false
+
         binding = FragmentAllFeedBinding.inflate(inflater,container,false)
 
         val layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
@@ -91,13 +97,14 @@ class AllFeedFragment : Fragment() {
 
         binding.recyclerView.adapter = postAdapter
 
-        getAllPosts(offset[offsetIndex],importSize,true)
+        getAllPosts(offset[offsetIndex],importSize,false)
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("AllFeedFrag","onViewCreated")
 
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
@@ -111,6 +118,9 @@ class AllFeedFragment : Fragment() {
         }
     }
     private fun getAllPosts(off : Int, size : Int, addTsetF: Boolean){
+        Log.d("AllFeedFrag","getAllPosts")
+        Log.d("AllFeedFrag","off : ${off}")
+        Log.d("AllFeedFrag","importsize : ${size}")
         lifecycleScope.launchWhenResumed {
             val response = viewModel.apolloClient.query(GetAllPostsQuery(toOptionalInt(off), toOptionalInt(size))).execute()
 
@@ -138,8 +148,9 @@ class AllFeedFragment : Fragment() {
         }
     }
     private fun getSubPosts(off : Int, size : Int, addTsetF: Boolean){
+        Log.d("AllFeedFrag","getSubPosts")
         lifecycleScope.launchWhenResumed {
-            val response = viewModel.apolloClient.query(GetSubscriberPostsQuery(toOptionalString("1"),toOptionalInt(off), toOptionalInt(size))).execute()
+            val response = viewModel.apolloClient.query(GetSubscriberPostsQuery(toOptionalString(viewModel.getUserId().toString()),toOptionalInt(off), toOptionalInt(size))).execute()
             if(response.data?.getSubscriberPosts?.size?:9 < 10) isReachedLast = true
             when(addTsetF){
                 true -> addSubPosts(response.data?.getSubscriberPosts)

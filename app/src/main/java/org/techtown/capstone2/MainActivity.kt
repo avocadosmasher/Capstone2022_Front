@@ -28,8 +28,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             ?.fragments
             ?.first()
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -41,7 +39,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         viewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
 
-        viewModel.setUserId(1)
+        viewModel.setUserId(2)
 
         icon_switch.setCheckedChangeListener {
             var tf = if(it == Checked.LEFT) true else false
@@ -89,7 +87,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
 
-        val directions = AllFeedFragmentDirections.actionAllFeedFragmentToWritingFragment()
+        val directions = AllFeedFragmentDirections.actionAllFeedFragmentToWritingFragment(-1)
 
         if(directions != null){
             navController.navigate(directions)

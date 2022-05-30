@@ -9,21 +9,23 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import androidx.transition.Slide
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.transition.Slide
+import androidx.navigation.fragment.navArgs
 import com.apollographql.apollo3.api.Optional
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.android.synthetic.main.fragment_writing.*
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.techtown.apollo.AddPostMutation
+import org.techtown.apollo.GetUpdatePostQuery
 import org.techtown.apollo.type.PostInput
 import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.FragmentWritingBinding
@@ -35,9 +37,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
-import java.net.URI
-import kotlin.contracts.contract
-import kotlin.properties.Delegates
 
 class WritingFragment : Fragment() {
 
@@ -56,13 +55,27 @@ class WritingFragment : Fragment() {
         )
     }
     private var isFileSelected = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val args: WritingFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentWritingBinding.inflate(inflater,container,false)
+
+        binding.isFiledSelected = isFileSelected
+
+        if(args.updatePostId != -1){
+            args.let {
+                lifecycleScope.launchWhenResumed {
+                    val response = viewModel.apolloClient.query(GetUpdatePostQuery(it.updatePostId.toString())).execute()
+                    response.data?.getPost?.apply {
+                        binding.apply {
+                            writingTitle.setText(title)
+                            writingContent.setText(content)
+                            writingAudioTitle.text = audio
+                        }
+                    }
+                }
+            }
+        }
 
         /** 음악 선택 **/
         binding.writingAudioUpload.setOnClickListener {
@@ -74,11 +87,21 @@ class WritingFragment : Fragment() {
 
         /** 글 작성 **/
         binding.writingConfirm.setOnClickListener {
-            lifecycleScope.launch {
-                /** Title and content **/
-                viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+
+            if(!isFileSelected){
+                lifecycleScope.launchWhenResumed {
+                    /** Title and content **/
+                    viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+                    findNavController().popBackStack()
+                }
+
+            }else{
+                lifecycleScope.launchWhenResumed {
+                    /** Title and content **/
+                    viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+                }
+                launchFileUpload()
             }
-            launchFileUpload()
         }
 
         if (viewModel.getWTMode() == viewModel.MODE_UPDATE){
@@ -131,6 +154,8 @@ class WritingFragment : Fragment() {
             Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("fileUploadClient","Success")
+                Log.d("fileUploadClient",response.code().toString())
+                Log.d("fileUploadClient",filePath)
                 findNavController().popBackStack()
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -142,7 +167,7 @@ class WritingFragment : Fragment() {
         var realPath:String = ""
         val filePathColumn = arrayOf(MediaStore.Files.FileColumns.DATA)
         val cursor: Cursor? = uri?.let {
-            ctx?.getContentResolver()?.query(
+            ctx?.contentResolver?.query(
                 it, filePathColumn,
                 null, null, null
             )
