@@ -102,14 +102,6 @@ class AllFeedFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.d("AllFeedFrag","onViewCreated")
-
-        postponeEnterTransition()
-        view.doOnPreDraw { startPostponedEnterTransition() }
-    }
-
     /** 전체 피드 관련 Method **/
     private fun addAllPosts(posts: List<GetAllPostsQuery.Post?>?){
         // Can be used to initialize or just add more data to the list.

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DiffUtil
@@ -30,6 +31,7 @@ import org.techtown.apollo.*
 import org.techtown.apollo.type.CommentInput
 import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.FragmentDetailedPostBinding
+import org.techtown.capstone2.fragments.feeds.AllFeedFragmentDirections
 import org.techtown.capstone2.fragments.feeds.MediaPlayerFragment
 import org.techtown.capstone2.util.CommentsDiffUtil
 import org.techtown.capstone2.util.themeColor
@@ -66,8 +68,10 @@ class DetailedPostFragment : Fragment() {
             binding.post = response.data?.getPost
 
             /** Music Player Fragment를 FrameLayout에 적용 **/
-            val frag = MediaPlayerFragment.newInstance(response.data?.getPost?.audio)
-            parentFragmentManager.beginTransaction().replace(R.id.detailed_post_music_player_container,frag).commit()
+            response.data?.getPost?.apply {
+                val frag = MediaPlayerFragment.newInstance(audio,id)
+                parentFragmentManager.beginTransaction().replace(R.id.detailed_post_music_player_container,frag).commit()
+            }
 
             /** 본인이 작성한 글인지 확인 **/
             // 수정, 삭제 버튼의 활성화 여부를 결정합시다.
@@ -104,10 +108,13 @@ class DetailedPostFragment : Fragment() {
 
         /** 프로필 CardView 클릭 Listener **/
         binding.detailedPostWriter.setOnClickListener {
+            val view = it
             binding?.post?.let {
                 Log.d("PostClick","클릭")
-                // ProfileFragment로 이동.
-                findNavController().navigate(DetailedPostFragmentDirections.actionDetailedPostFragmentToProfileFragment(it.member.id.toInt()))
+                val profileTransitionName = getString(R.string.profile_card_profile_transition_name)
+                val extras = FragmentNavigatorExtras((view to profileTransitionName) as Pair<View, String>)
+                val directions = DetailedPostFragmentDirections.actionDetailedPostFragmentToProfileFragment(it.member.id.toInt())
+                findNavController().navigate(directions,extras)
             }
         }
 
@@ -158,6 +165,5 @@ class DetailedPostFragment : Fragment() {
         val diffResult = DiffUtil.calculateDiff(CommentsDiffUtil(commentsAdapter.itemList,comments))
         diffResult.dispatchUpdatesTo(commentsAdapter)
         commentsAdapter.itemList = ArrayList(comments)
-        //commentsAdapter.notifyDataSetChanged()
     }
 }

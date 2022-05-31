@@ -112,11 +112,12 @@
                             android:id="@+id/detailed_post_writer"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:transitionName="@{@string/profile_card_transition_name(post.id)}">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
-                                <!-- app:glideSrc="" -->
+
                                 <ImageView
                                     android:id="@+id/detailed_post_writer_profile_image"
                                     android:layout_marginVertical="10sp"

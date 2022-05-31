@@ -15,6 +15,7 @@ import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.music_player.*
 import okhttp3.ResponseBody
+import okio.utf8Size
 import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.MusicPlayerBinding
 import org.techtown.download.RetrofitClient
@@ -25,17 +26,19 @@ import java.lang.Exception
 
 class MediaPlayerFragment: Fragment() {
 
-    private var address = "http://133.186.247.141:5000/audio/"
+    private var address = "http://133.186.247.141:5000/audio?post="
     private var mp: MediaPlayer? = null
     private var title: String? = null
+    private var postId:String? = null
     private lateinit var binding:MusicPlayerBinding
 
     companion object{
-        fun newInstance(title:String?) : MediaPlayerFragment {
+        fun newInstance(title:String?,postId:String?) : MediaPlayerFragment {
             val fragment = MediaPlayerFragment()
             val bundle = Bundle()
 
             bundle.putString("title",title)
+            bundle.putString("postId",postId)
             fragment.arguments = bundle
 
             return fragment
@@ -45,22 +48,23 @@ class MediaPlayerFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         title = arguments?.getString("title")
+        postId = arguments?.getString("postId")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = MusicPlayerBinding.inflate(layoutInflater,container,false)
 
-        title?.let { Log.d("Title", it) }
+        binding = MusicPlayerBinding.inflate(layoutInflater,container,false)
 
         binding.musicTitle.text = title
 
         binding.audioDownloadButton.setOnClickListener {
             val call = RetrofitClient.retrofitOpenService
 
-            call.fileDownloadClient("audio/" + title)?.enqueue(object:Callback<ResponseBody>{
+            call.fileDownloadClient(postId?.toInt()?:-1)?.enqueue(object:Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                     val success = writeResponseBodyToDisk(response.body())
-                    Log.d("FileDownLoad : ", " Success ")
+                    if(success) Log.d("FileDownLoad : ", " Success ")
+                    else Log.d("FileDownLoad : ", "Failed")
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -70,12 +74,13 @@ class MediaPlayerFragment: Fragment() {
         }
 
         binding.toggleButton.setOnCheckedChangeListener { buttonView, isChecked ->
+            Log.d("music_src",address+postId)
             when(isChecked){
                 true -> {
                     if(mp == null){
                         mp = MediaPlayer()
                         mp?.apply{
-                            setDataSource(address+title)
+                            setDataSource(address+postId)
                             prepare()
                         }
                         initializeSeekBar(binding.seekBar)
@@ -121,16 +126,19 @@ class MediaPlayerFragment: Fragment() {
         },0)
     }
     private fun writeResponseBodyToDisk(body: ResponseBody?): Boolean {
+
+        Log.d("FilePath",Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            .toString() + File.separator.toString() + title)
+
         return try {
-            // todo change the file location/name according to your needs
-            val  downloadFile =
-                File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        .toString() + File.separator.toString() + title)
+            val filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    .toString() + File.separator.toString() + title
+            val downloadFile = File(filePath)
             var inputStream: InputStream? = null
             var outputStream: OutputStream? = null
 
             try {
+                FileOutputStream(downloadFile)
                 val fileReader = ByteArray(4096)
                 val fileSize: Long = body?.contentLength()?:0
                 var fileSizeDownloaded: Long = 0
@@ -150,6 +158,7 @@ class MediaPlayerFragment: Fragment() {
                 true
 
             } catch (e: IOException) {
+                Log.d("FileDownloadError",e.message.toString())
                 false
             } finally {
                 if (inputStream != null) {

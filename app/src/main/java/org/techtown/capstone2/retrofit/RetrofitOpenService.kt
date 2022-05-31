@@ -6,8 +6,10 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface RetrofitOpenService {
-    @GET
-    fun fileDownloadClient(@Url fileUrl: String?): Call<ResponseBody>?
+    @GET("/audio")
+    fun fileDownloadClient(
+        @Query("post") postId:Int
+    ): Call<ResponseBody>?
 
     @Multipart
     @PUT("/audio")

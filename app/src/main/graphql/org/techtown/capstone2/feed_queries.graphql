@@ -91,10 +91,15 @@ query getSubscriberCount($id:ID!){
     getSubscriberCount(toMemberId: $id)
 }
 
+mutation  updatePost($id:ID!,$postDto:postInput){
+    updatePost(id: $id,postDto: $postDto){
+        id
+    }
+}
 
 mutation addPost($postDto:postInput){
     addPost(postDto: $postDto){
-        createdAt
+        id
     }
 }
 

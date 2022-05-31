@@ -1,5 +1,6 @@
 package org.techtown.capstone2.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,10 +14,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo3.api.Optional
+import com.google.android.material.transition.MaterialContainerTransform
 import org.techtown.apollo.*
 import org.techtown.apollo.type.MemberInput
 import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.FragmentProfileBinding
+import org.techtown.capstone2.util.themeColor
 import org.techtown.capstone2.viewmodel.MainViewModel
 
 
@@ -31,6 +34,13 @@ class ProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment_container
+            duration = resources.getInteger(R.integer.material_motion_duration_long_2).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(requireContext().themeColor(R.attr.colorSurface))
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

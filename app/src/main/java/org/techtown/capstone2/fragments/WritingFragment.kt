@@ -1,31 +1,36 @@
 package org.techtown.capstone2.fragments
 
 import android.app.Activity
+import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import androidx.transition.Slide
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.transition.Slide
 import com.apollographql.apollo3.api.Optional
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.android.synthetic.main.fragment_writing.*
-import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.techtown.apollo.AddPostMutation
 import org.techtown.apollo.GetUpdatePostQuery
+import org.techtown.apollo.UpdatePostMutation
 import org.techtown.apollo.type.PostInput
 import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.FragmentWritingBinding
@@ -37,6 +42,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+
 
 class WritingFragment : Fragment() {
 
@@ -87,25 +93,32 @@ class WritingFragment : Fragment() {
 
         /** 글 작성 **/
         binding.writingConfirm.setOnClickListener {
-
-            if(!isFileSelected){
+            if(!isFileSelected && args.updatePostId != -1){
+                // 업데이트(음악파일 변경 x)
                 lifecycleScope.launchWhenResumed {
                     /** Title and content **/
-                    viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+                    viewModel.apolloClient.mutation(UpdatePostMutation(args.updatePostId.toString(),postInput)).execute()
                     findNavController().popBackStack()
                 }
 
-            }else{
+            }else if(isFileSelected && args.updatePostId != -1){
+                // 업데이트(음악파일 변경 o)
                 lifecycleScope.launchWhenResumed {
                     /** Title and content **/
-                    viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+                    val response = viewModel.apolloClient.mutation(UpdatePostMutation(args.updatePostId.toString(),postInput)).execute()
+                    launchFileUpload(response.data?.updatePost?.id)
                 }
-                launchFileUpload()
+            }else if(isFileSelected && args.updatePostId == -1){
+                // 새로 글 쓰기
+                lifecycleScope.launchWhenResumed {
+                    /** Title and content **/
+                    val response = viewModel.apolloClient.mutation(AddPostMutation(postInput)).execute()
+                    launchFileUpload(response.data?.addPost?.id)
+                }
+            }else{
+                // 새로 글 쓰기인데 음악 추가 안함.(오류임)
+                Toast.makeText(context,"음악 파일을 선택해 주세요.",Toast.LENGTH_SHORT).show()
             }
-        }
-
-        if (viewModel.getWTMode() == viewModel.MODE_UPDATE){
-            TODO("Post에 대한 정보를 DataBinding을 해줘야함.")
         }
 
         return binding.root
@@ -132,8 +145,9 @@ class WritingFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 1 && resultCode == Activity.RESULT_OK){
             val fullAudioUri = data?.data
+            Log.d("fullAudioUri",data?.data.toString())
             fileName = getFileNameFromUri(context,fullAudioUri)
-            filePath = getRealPathFromUri(context,fullAudioUri)
+            filePath = getRealPathFromUri(requireContext(),fullAudioUri)
             binding.musicTitle = fileName
 
             if(!isFileSelected){
@@ -143,19 +157,23 @@ class WritingFragment : Fragment() {
 
         }
     }
-    fun launchFileUpload(){
+    fun launchFileUpload(postId:String?){
         /** File Upload Part **/
+        File(filePath)
         val file = File(filePath)
         val formFile = FormDataUtil.getAudioBody("audio",fileName,file)
 
         val call = RetrofitClient.retrofitOpenService
 
-        call.fileUploadClient(Integer.valueOf(viewModel.getUserId()),formFile)?.enqueue(object :
+        // args.updatePostId 가 -1이면? 새로작성
+        // args.updatePostId 가
+
+        call.fileUploadClient(Integer.valueOf(postId),formFile)?.enqueue(object :
             Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("fileUploadClient","Success")
                 Log.d("fileUploadClient",response.code().toString())
-                Log.d("fileUploadClient",filePath)
+                //Log.d("fileUploadClient",filePath)
                 findNavController().popBackStack()
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -163,6 +181,7 @@ class WritingFragment : Fragment() {
             }
         })
     }
+
     fun getRealPathFromUri(ctx: Context?, uri: Uri?): String{
         var realPath:String = ""
         val filePathColumn = arrayOf(MediaStore.Files.FileColumns.DATA)
@@ -181,6 +200,7 @@ class WritingFragment : Fragment() {
         }
         return realPath
     }
+
     fun getFileNameFromUri(ctx: Context?,uri: Uri?):String{
         uri?.let {
             ctx?.contentResolver?.query(it,null,null,null,null)

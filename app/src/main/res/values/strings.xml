@@ -11,4 +11,8 @@
 
     <!--ProfilePostList-->
     <string name="post_list_transition_name">post_list_%1$s</string>
+
+    <!--ProfileFragmen-->
+    <string name="profile_card_transition_name">profile_card_%1$s</string>
+    <string name="profile_card_profile_transition_name">profile_card_profile</string>
 </resources>
