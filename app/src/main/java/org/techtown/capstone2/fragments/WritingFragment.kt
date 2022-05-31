@@ -1,6 +1,7 @@
 package org.techtown.capstone2.fragments
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -47,7 +48,7 @@ import java.io.File
 class WritingFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
-    private lateinit var filePath:String
+    private lateinit var fileUri:Uri
     private lateinit var fileName:String
     private lateinit var binding:FragmentWritingBinding
     private val postInput by lazy {
@@ -85,8 +86,8 @@ class WritingFragment : Fragment() {
 
         /** 음악 선택 **/
         binding.writingAudioUpload.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK).apply{
-                type ="*/*"
+            val intent = Intent(Intent.ACTION_GET_CONTENT).apply{
+                type ="audio/*"
             }
             startActivityForResult(intent,1)
         }
@@ -147,7 +148,9 @@ class WritingFragment : Fragment() {
             val fullAudioUri = data?.data
             Log.d("fullAudioUri",data?.data.toString())
             fileName = getFileNameFromUri(context,fullAudioUri)
-            filePath = getRealPathFromUri(requireContext(),fullAudioUri)
+            data?.data?.let {
+                fileUri = it
+            }
             binding.musicTitle = fileName
 
             if(!isFileSelected){
@@ -159,21 +162,16 @@ class WritingFragment : Fragment() {
     }
     fun launchFileUpload(postId:String?){
         /** File Upload Part **/
-        File(filePath)
-        val file = File(filePath)
+        val file = getFileFromUri(requireContext().contentResolver, fileUri, requireContext().cacheDir)
         val formFile = FormDataUtil.getAudioBody("audio",fileName,file)
 
         val call = RetrofitClient.retrofitOpenService
-
-        // args.updatePostId 가 -1이면? 새로작성
-        // args.updatePostId 가
 
         call.fileUploadClient(Integer.valueOf(postId),formFile)?.enqueue(object :
             Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("fileUploadClient","Success")
                 Log.d("fileUploadClient",response.code().toString())
-                //Log.d("fileUploadClient",filePath)
                 findNavController().popBackStack()
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -182,25 +180,15 @@ class WritingFragment : Fragment() {
         })
     }
 
-    fun getRealPathFromUri(ctx: Context?, uri: Uri?): String{
-        var realPath:String = ""
-        val filePathColumn = arrayOf(MediaStore.Files.FileColumns.DATA)
-        val cursor: Cursor? = uri?.let {
-            ctx?.contentResolver?.query(
-                it, filePathColumn,
-                null, null, null
-            )
+    private fun getFileFromUri(contentResolver: ContentResolver, uri: Uri, directory: File): File {
+        val file =
+            File.createTempFile("suffix", "prefix", directory)
+        file.outputStream().use {
+            contentResolver.openInputStream(uri)?.copyTo(it)
         }
 
-        if (cursor != null) {
-            cursor.moveToFirst()
-            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-            realPath = cursor.getString(columnIndex)
-            cursor.close()
-        }
-        return realPath
+        return file
     }
-
     fun getFileNameFromUri(ctx: Context?,uri: Uri?):String{
         uri?.let {
             ctx?.contentResolver?.query(it,null,null,null,null)
@@ -210,4 +198,24 @@ class WritingFragment : Fragment() {
             return it.getString(nameIndex)
         }?:return ""
     }
+    /**
+    fun getRealPathFromUri(ctx: Context?, uri: Uri?): String{
+    var realPath:String = ""
+    val filePathColumn = arrayOf(MediaStore.Files.FileColumns.DATA)
+    val cursor: Cursor? = uri?.let {
+    ctx?.contentResolver?.query(
+    it, filePathColumn,
+    null, null, null
+    )
+    }
+
+    if (cursor != null) {
+    cursor.moveToFirst()
+    val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
+    realPath = cursor.getString(columnIndex)
+    cursor.close()
+    }
+    return realPath
+    }
+     **/
 }
