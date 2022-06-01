@@ -38,9 +38,16 @@
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="org.techtown.capstone2.fragments.SettingFragment"
+        android:name="org.techtown.capstone2.fragments.setting.SettingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/writingFragment"
         android:name="org.techtown.capstone2.fragments.WritingFragment"
@@ -62,4 +69,9 @@
             android:id="@+id/action_profileFragment_to_detailedPostFragment"
             app:destination="@id/detailedPostFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="org.techtown.capstone2.fragments.setting.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
 </navigation>

@@ -48,6 +48,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 MY_PERMISSION_REQUEST)
         }
 
+        /** navigation animation Setting **/
+        currentNavigationFragment?.apply {
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
+            }
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
@@ -63,6 +73,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             var tf = if(it == Checked.LEFT) true else false
             viewModel.iconSwitchListener?.onIconSwitchChanged(tf)
         }
+
+        setting_button.setOnClickListener {
+            val directions = AllFeedFragmentDirections.actionAllFeedFragmentToSettingFragment()
+            if(directions != null){
+                navController.navigate(directions)
+            }
+        }
     }
 
     private fun setUpFab(){
@@ -77,7 +94,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
     }
-
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         if(destination.id == R.id.allFeedFragment){
             setUtilsForFeed()
@@ -88,25 +104,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private fun setUtilsForFeed(){
         fab.show()
         icon_switch.visibility = View.VISIBLE
+        setting_button.visibility = View.VISIBLE
     }
     private fun setUtilsForOthers(){
         fab.visibility = View.INVISIBLE
         icon_switch.visibility = View.GONE
+        setting_button.visibility = View.GONE
     }
 
     private fun navigateTo(){
-
-        currentNavigationFragment?.apply {
-            exitTransition = MaterialElevationScale(false).apply {
-                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
-            }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
-            }
-        }
-
         val directions = AllFeedFragmentDirections.actionAllFeedFragmentToWritingFragment(-1)
-
         if(directions != null){
             navController.navigate(directions)
         }

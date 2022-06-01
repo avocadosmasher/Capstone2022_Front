@@ -12,7 +12,14 @@
     <!--ProfilePostList-->
     <string name="post_list_transition_name">post_list_%1$s</string>
 
-    <!--ProfileFragmen-->
+    <!--ProfileFragment-->
     <string name="profile_card_transition_name">profile_card_%1$s</string>
     <string name="profile_card_profile_transition_name">profile_card_profile</string>
+
+    <!--SettingFragment-->
+    <string name="setting_card_notification_transition_name">setting_card_notification</string>
+    <string name="setting_notification_transition_name">setting_notification</string>
+
+    <string name="setting_card_profile_transition_name">setting_card_profile_%1$s</string>
+
 </resources>

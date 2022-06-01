@@ -1,14 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.SettingFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settingView"
+    tools:context=".fragments.setting.SettingFragment">
+    <data>
+        <variable
+            name="userId"
+            type="java.lang.Integer" />
+    </data>
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20sp">
+            <ImageView
+                android:id="@+id/setting_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                app:srcCompat="@drawable/ic_back" />
 
-</FrameLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="설정"
+                android:textSize="20sp" />
+
+        </RelativeLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/setting_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginBottom="10sp"
+            android:transitionName="@string/setting_card_notification_transition_name">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10sp"
+                android:layout_marginVertical="5sp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30sp"
+                    android:src="@drawable/ic_notification"
+                    android:layout_gravity="center_vertical"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="공지"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5sp"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/setting_profile_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginBottom="10sp"
+            android:transitionName="@{@string/setting_card_profile_transition_name(userId)}">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10sp"
+                android:layout_marginVertical="5sp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30sp"
+                    android:src="@drawable/ic_profile_update"
+                    android:layout_gravity="center_vertical"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="프로필 수정"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5sp"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/setting_log_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginBottom="10sp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10sp"
+                android:layout_marginVertical="5sp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30sp"
+                    android:src="@drawable/ic_log_out"
+                    android:layout_gravity="center_vertical"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="로그아웃"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5sp"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</layout>
