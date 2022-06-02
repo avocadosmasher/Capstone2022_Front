@@ -167,7 +167,7 @@ class WritingFragment : Fragment() {
 
         val call = RetrofitClient.retrofitOpenService
 
-        call.fileUploadClient(Integer.valueOf(postId),formFile)?.enqueue(object :
+        call.fileUploadClient(viewModel.getToken(),Integer.valueOf(postId),formFile)?.enqueue(object :
             Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("fileUploadClient","Success")

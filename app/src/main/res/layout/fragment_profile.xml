@@ -46,7 +46,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- need to be added app:glideSrc="@{}"-->
                 <ImageView
                     android:id="@+id/profile_image"
                     android:layout_width="100sp"
@@ -55,6 +54,7 @@
                     android:layout_marginVertical="20sp"
                     android:contentDescription="Profile image of poster"
                     app:glideCircularCrop="@{true}"
+                    app:glideSrc="@{profile.picture}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
                 <LinearLayout

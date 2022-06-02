@@ -1,6 +1,7 @@
 package org.techtown.capstone2.fragments.feeds
 
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -13,11 +14,13 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.music_player.*
 import okhttp3.ResponseBody
 import okio.utf8Size
 import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.MusicPlayerBinding
+import org.techtown.capstone2.viewmodel.MainViewModel
 import org.techtown.download.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,6 +34,7 @@ class MediaPlayerFragment: Fragment() {
     private var title: String? = null
     private var postId:String? = null
     private lateinit var binding:MusicPlayerBinding
+    private val viewModel:MainViewModel by activityViewModels()
 
     companion object{
         fun newInstance(title:String?,postId:String?) : MediaPlayerFragment {
@@ -60,7 +64,7 @@ class MediaPlayerFragment: Fragment() {
         binding.audioDownloadButton.setOnClickListener {
             val call = RetrofitClient.retrofitOpenService
 
-            call.fileDownloadClient(postId?.toInt()?:-1)?.enqueue(object:Callback<ResponseBody>{
+            call.fileDownloadClient(viewModel.getToken(),postId?.toInt()?:-1)?.enqueue(object:Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                     val success = writeResponseBodyToDisk(response.body())
                     if(success) Log.d("FileDownLoad : ", " Success ")
@@ -80,7 +84,10 @@ class MediaPlayerFragment: Fragment() {
                     if(mp == null){
                         mp = MediaPlayer()
                         mp?.apply{
-                            setDataSource(address+postId)
+                            val headers = HashMap<String,String>()
+                            headers.put("Authorization","Bearer ${viewModel.getToken()}")
+                            val uri = Uri.parse(address+postId)
+                            activity?.applicationContext?.let { setDataSource(it,uri,headers) }
                             prepare()
                         }
                         initializeSeekBar(binding.seekBar)

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,6 +19,7 @@ import com.polyak.iconswitch.IconSwitch.Checked
 import kotlinx.android.synthetic.main.activity_main.*
 import org.techtown.capstone2.databinding.ActivityMainBinding
 import org.techtown.capstone2.fragments.feeds.AllFeedFragmentDirections
+import org.techtown.capstone2.util.PreferenceManager
 import org.techtown.capstone2.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener{
@@ -65,7 +67,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         navController = nav_host_fragment_container.findNavController()
         setUpFab()
 
+        /** viewModel & JWT Token Config **/
         viewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+        PreferenceManager.getString(applicationContext,"token")?.let {
+            viewModel.setToken(it)
+        }?: {
+            // Token is null
+            Toast.makeText(this,"JWT Token prob",Toast.LENGTH_SHORT).show()
+        }
+        PreferenceManager.getString(applicationContext,"id")?.let { viewModel.setUserId(it.toInt()) }
+
 
         viewModel.setUserId(2)
 

@@ -1,5 +1,6 @@
 package org.techtown.capstone2.fragments.setting
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,9 +10,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.transition.MaterialElevationScale
+import org.techtown.capstone2.LoginActivity
 import org.techtown.capstone2.R
 import org.techtown.capstone2.databinding.FragmentSettingBinding
 import org.techtown.capstone2.fragments.feeds.AllFeedFragmentDirections
+import org.techtown.capstone2.util.PreferenceManager
 import org.techtown.capstone2.viewmodel.MainViewModel
 
 class SettingFragment : Fragment() {
@@ -56,7 +59,13 @@ class SettingFragment : Fragment() {
         }
 
         binding.settingLogOut.setOnClickListener {
-
+            activity?.let { it1 ->
+                PreferenceManager.setString(it1.applicationContext,"token","")
+                PreferenceManager.setString(it1.applicationContext,"id","")
+                val intent = Intent(it1.baseContext,LoginActivity::class.java)
+                startActivity(intent)
+                it1.finish()
+            }
         }
 
         return binding.root
