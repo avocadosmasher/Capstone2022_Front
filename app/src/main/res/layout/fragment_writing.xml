@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            tools:text="제목을 입력해주세요"/>
+            android:hint="제목을 입력해주세요" />
         <EditText
             android:id="@+id/writing_content"
             android:layout_marginTop="10sp"
@@ -68,7 +68,7 @@
             android:lines="10"
             android:singleLine="false"
             android:gravity="top"
-            tools:text="내용을 입력해 주세요."/>
+            android:hint="내용을 입력해 주세요." />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
