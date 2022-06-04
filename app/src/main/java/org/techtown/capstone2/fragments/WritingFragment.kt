@@ -27,6 +27,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.transition.Slide
 import com.apollographql.apollo3.api.Optional
 import com.google.android.material.transition.MaterialContainerTransform
+import com.test.progressbartest.ProgressDialog
 import kotlinx.android.synthetic.main.fragment_writing.*
 import okhttp3.ResponseBody
 import org.techtown.apollo.AddPostMutation
@@ -63,6 +64,9 @@ class WritingFragment : Fragment() {
     }
     private var isFileSelected = false
     private val args: WritingFragmentArgs by navArgs()
+    private val progress by lazy {
+        activity?.let { ProgressDialog(it) }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentWritingBinding.inflate(inflater,container,false)
@@ -94,11 +98,15 @@ class WritingFragment : Fragment() {
 
         /** 글 작성 **/
         binding.writingConfirm.setOnClickListener {
+
+            progress?.start("...글 작성중...")
+
             if(!isFileSelected && args.updatePostId != -1){
                 // 업데이트(음악파일 변경 x)
                 lifecycleScope.launchWhenResumed {
                     /** Title and content **/
                     viewModel.apolloClient.mutation(UpdatePostMutation(args.updatePostId.toString(),postInput)).execute()
+                    progress?.dismiss()
                     findNavController().popBackStack()
                 }
 
@@ -118,6 +126,7 @@ class WritingFragment : Fragment() {
                 }
             }else{
                 // 새로 글 쓰기인데 음악 추가 안함.(오류임)
+                progress?.dismiss()
                 Toast.makeText(context,"음악 파일을 선택해 주세요.",Toast.LENGTH_SHORT).show()
             }
         }
@@ -172,9 +181,11 @@ class WritingFragment : Fragment() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("fileUploadClient","Success")
                 Log.d("fileUploadClient",response.code().toString())
+                progress?.dismiss()
                 findNavController().popBackStack()
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                progress?.dismiss()
                 Log.d("fileUploadClient","failed : " + t.message.toString())
             }
         })

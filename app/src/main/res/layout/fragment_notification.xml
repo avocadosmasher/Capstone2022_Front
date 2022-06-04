@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.setting.NotificationFragment"
-    android:transitionName="@string/setting_notification_transition_name">
+    android:transitionName="@string/setting_notification_transition_name"
+    android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/notification_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            app:srcCompat="@drawable/ic_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="공지"
+            android:textSize="20sp" />
+    </RelativeLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="공지입니당"
+        android:gravity="center"
+        android:text="공지입니다."
         android:textAppearance="?attr/textAppearanceHeadline3"/>
-
-</FrameLayout>
+</LinearLayout>

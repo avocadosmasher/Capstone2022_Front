@@ -15,6 +15,7 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.test.progressbartest.ProgressDialog
 import kotlinx.android.synthetic.main.music_player.*
 import okhttp3.ResponseBody
 import okio.utf8Size
@@ -35,6 +36,9 @@ class MediaPlayerFragment: Fragment() {
     private var postId:String? = null
     private lateinit var binding:MusicPlayerBinding
     private val viewModel:MainViewModel by activityViewModels()
+    private val progress by lazy {
+        activity?.let { ProgressDialog(it) }
+    }
 
     companion object{
         fun newInstance(title:String?,postId:String?) : MediaPlayerFragment {
@@ -64,15 +68,19 @@ class MediaPlayerFragment: Fragment() {
         binding.audioDownloadButton.setOnClickListener {
             val call = RetrofitClient.retrofitOpenService
 
+            progress?.start("...음악 다운로드중...")
+
             call.fileDownloadClient(viewModel.getToken(),postId?.toInt()?:-1)?.enqueue(object:Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                     val success = writeResponseBodyToDisk(response.body())
                     if(success) Log.d("FileDownLoad : ", " Success ")
                     else Log.d("FileDownLoad : ", "Failed")
+                    progress?.dismiss()
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     Log.d("FileDownLoad : ", "Failed(Reason : ${t.message})")
+                    progress?.dismiss()
                 }
             })
         }
