@@ -15,6 +15,7 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.test.progressbartest.ProgressDialog
 import kotlinx.android.synthetic.main.music_player.*
 import okhttp3.ResponseBody
@@ -87,6 +88,7 @@ class MediaPlayerFragment: Fragment() {
 
         binding.toggleButton.setOnCheckedChangeListener { buttonView, isChecked ->
             Log.d("music_src",address+postId)
+
             when(isChecked){
                 true -> {
                     if(mp == null){
@@ -103,6 +105,11 @@ class MediaPlayerFragment: Fragment() {
                     mp?.start()
                 }
                 false -> {
+                    mp?.pause()
+                }
+            }
+            findNavController().addOnDestinationChangedListener { controller, destination, arguments ->
+                if(destination.id != R.id.detailedPostFragment){
                     mp?.pause()
                 }
             }
