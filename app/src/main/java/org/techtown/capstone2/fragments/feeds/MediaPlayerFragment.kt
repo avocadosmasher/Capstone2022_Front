@@ -110,7 +110,7 @@ class MediaPlayerFragment: Fragment() {
             }
             findNavController().addOnDestinationChangedListener { controller, destination, arguments ->
                 if(destination.id != R.id.detailedPostFragment){
-                    mp?.pause()
+                    mp?.stop()
                 }
             }
         }
