@@ -14,12 +14,35 @@ BGM Share 프로젝트는 모바일 앱을 통한 간단한 영상 편집에서 
 
 * 음악 파일의 업로드 및 다운로드. (글에 같이 첨부하는 형식.)
 
-<img src="글 작성 로딩화면.jpg" width="300" height="650" align="right"/><음악 다운로드 로딩화면.jpg" width="300" height="650" align ="center"/>
+<img src="글 작성 로딩화면.jpg" width="300" height="650" align="left"/><img src="음악 다운로드 로딩화면.jpg" width="300" height="650" align ="right"/>
+
 
 
 * 전체 글 확인 피드 & 구독자 글 확인 피드.
 
 <img src="전체 피드.jpg" width="300" height="650" align="left"/> <img src="구독 피드.jpg" width="300" height="650" align="right"/>
+
+
+
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+* 
+
+
+
 
 
 * 프로필 기능.(프로필 수정, 구독, 사용자 업로드 전체 글)
@@ -37,6 +60,42 @@ BGM Share 프로젝트는 모바일 앱을 통한 간단한 영상 편집에서 
 * 카카오 연동 로그인, 네이버 연동 로그인, 구글 연동 로그인.
 
 <img src="로그인 선택 화면.jpg" width="300" height="650" align="left"/> <img src="로그인 WebView.jpg" width="300" height="650" align="right"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 빌드 및 버전
